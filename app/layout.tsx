@@ -12,8 +12,8 @@ import './globals.css'
 const font = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'KI Innovationszentrum',
-  description: 'AI Platform',
+  title: 'Videyou',
+  description: 'Interaktive Videos',
 }
 
 export default async function RootLayout({

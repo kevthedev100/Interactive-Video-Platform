@@ -6,31 +6,31 @@ import { SmilePlus, BookMarked, CalendarCheck2, Star, Apple, BrainCog, ListResta
 
 const testimonials = [
   {
-    name: "Organisation",
+    name: "Interaktivität",
     icon: <CalendarCheck className="w-10 h-10 text-violet-500 mx-auto" />,
-    title: "Zeitmanagement & Terminplanung",
+    title: "Buttons, Links und vieles mehr...",
     description: "Kirana verwaltet deinen Kalender und behält alle Events im Überblick und erinnert dich an alles Wichtige.",
   },
   {
-    name: "Texte verfassen",
+    name: "Skriptgenerierung",
     icon: <ScrollText className="w-10 h-10 text-red-500 mx-auto" />,
-    title: "Von E-Mail bis Grußkarte",
+    title: "AI-Assistent mit Expertenwissen",
     description: "Kirana kann per Spracheingabe alle Texte von dir korregieren oder eben alles von sich aus generieren.",
   },
   {
-    name: "Second-Brain",
+    name: "DSGVO Konform",
     icon: <BookMarked className="w-10 h-10 text-white-700 mx-auto" />,
-    title: "Mit Langzeitgedächtnis",
+    title: "In Deutschland gehostete Videos",
     description: "Kirana kann deine täglichen Erkenntnisse speichern und eine endlose Wissensdatenbank aufbauen.",
   },
   {
-    name: "Fitness & Ernährung",
+    name: "Schnelle Ladezeiten",
     icon: <Apple className="w-10 h-10 text-emerald-500 mx-auto" />,
     title: "Körperliche Weiterentwicklung",
     description: "Kirana dient als Fitness- und Ernährungscoach und begleitet dich wie ein echter Coach in Echtzeit und mit einem Langzeitgedächtnis.",
   },
   {
-    name: "Psychologische Hilfestellung",
+    name: "Von Experten entwickelt",
     icon: <SmilePlus className="w-10 h-10 text-red-300 mx-auto" />,
     title: "Ansprechpartner für Probleme",
     description: "Kirana hat einen spezifischen Assistenten, der dir als Psychotherapeut und Tagebuch dient, um dich selbst weiterzuentwickeln.",
@@ -94,10 +94,10 @@ const testimonials3 = [
 export const LandingContent = () => {
   return (
     <div className="px-10 pb-10 pt-6">
-      <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Kiranas Fähigkeiten</h2>
+      <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Warum Videyou die richtige Platform ist</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
         {testimonials.map((item, index) => (
-          <Card key={index} className="bg-[#192339] border-none text-white text-center px-0 py-0">
+          <Card key={index} className="bg-[#2d2d2d] border-none text-white text-center px-0 py-0">
             <div className="pt-8">{item.icon}</div>
             <CardHeader>
               <CardTitle>
@@ -114,7 +114,7 @@ export const LandingContent = () => {
       <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Warum Kirana?</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {testimonials2.map((item, index) => (
-          <Card key={index} className="bg-[#192339] border-none text-white text-center px-0 py-0">
+          <Card key={index} className="bg-[#2d2d2d] border-none text-white text-center px-0 py-0">
             <div className="pt-8">{item.icon}</div>
             <CardHeader>
               <CardTitle>
@@ -130,7 +130,7 @@ export const LandingContent = () => {
       </div>
 
       {/* Video-Embed-Code direkt vor dem Footer */}
-      <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Kirana in einem interaktiven Video erklärt</h2>
+      <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Erfolgsbeispiele von interaktiven Videos</h2>
       <div className="my-8" style={{ position: 'relative', overflow: 'hidden', paddingTop: '56.25%' }}>
         <iframe 
           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
@@ -142,14 +142,14 @@ export const LandingContent = () => {
         </iframe>
       </div>
       <div className="text-sm md:text-xl font-light text-zinc-400 text-center">
-        In diesem Video kannst du dir durch interaktionen einen einzigartigen Eindruck machen...
+        Überzeuge deine Kunden persönlich mit einem interaktiven Video
       </div>
     
 
       <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-20">Sprech einfach mit uns</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8 pb-20">
         {testimonials3.map((item, index) => (
-          <Card key={index} className="bg-[#192339] border-none text-white text-center px-0 py-0">
+          <Card key={index} className="bg-[#2d2d2d] border-none text-white text-center px-0 py-0">
             <div className="pt-8">{item.icon}</div>
             <CardHeader>
               <CardTitle>
@@ -168,7 +168,7 @@ export const LandingContent = () => {
 
 {/* Footer-Bereich */}
 <div className="w-full mt-10">
-  <footer className="flex flex-wrap justify-between items-center px-10 py-4 bg-[#192339] text-white text-sm md:text-base">
+  <footer className="flex flex-wrap justify-between items-center px-10 py-4 bg-[#2d2d2d] text-white text-sm md:text-base">
     <div className="footer-item w-full md:w-auto mb-4 md:mb-0">
       <a href="http://www.impressum.de" target="_blank" rel="noopener noreferrer" className="hover:underline">
         Impressum
@@ -185,7 +185,7 @@ export const LandingContent = () => {
       </a>
     </div>
     <div className="footer-item w-full md:w-auto">
-      © KI Innovationszentrum 2024
+      © Videoyou 2024
     </div>
   </footer>
 </div>

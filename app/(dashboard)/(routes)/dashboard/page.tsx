@@ -17,7 +17,7 @@ export default function HomePage() {
     <div>
       <div className="space-y-4">
         <h2 className="text-2xl md:text-4xl font-bold text-center">
-          Videyou - Interaktive Videos
+          Videyou - Deine Platform für Interaktive Videos
         </h2>
         <p className="text-muted-foreground font-light text-sm md:text-lg text-center px-3">
           Die Revolution im Videomarketing
@@ -31,7 +31,7 @@ export default function HomePage() {
         {tools.map((tool) => (
           <Card onClick={() => router.push(tool.href)} key={tool.href} className="p-4 border-2 flex items-center justify-between hover:shadow-md transition cursor-pointer">
             <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+              <div className={cn("p-2 w-fit rounded-md")}>
                 <tool.icon className={cn("w-8 h-8", tool.color)} />
               </div>
               <div className="font-semibold">
@@ -50,7 +50,7 @@ export default function HomePage() {
         {tools3.map((tool) => (
           <Card onClick={() => router.push(tool.href)} key={tool.href} className="p-4 border-2 flex items-center justify-between hover:shadow-md transition cursor-pointer">
             <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+              <div className={cn("p-2 w-fit rounded-md")}>
                 <tool.icon className={cn("w-8 h-8", tool.color)} />
               </div>
               <div className="font-semibold">
@@ -70,7 +70,7 @@ export default function HomePage() {
         {tools2.map((tool) => (
           <Card onClick={() => router.push(tool.href)} key={tool.href} className="p-4 border-2 flex items-center justify-between hover:shadow-md transition cursor-pointer">
             <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+              <div className={cn("p-2 w-fit rounded-md")}>
                 <tool.icon className={cn("w-8 h-8", tool.color)} />
               </div>
               <div className="font-semibold">

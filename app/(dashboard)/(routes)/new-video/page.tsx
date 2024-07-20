@@ -1,10 +1,8 @@
-import { CalendarCheck } from "lucide-react";
-
+import { Plus } from "lucide-react";
 import { Heading } from "@/components/heading";
-import { SubscriptionButton } from "@/components/subscription-button";
 import { checkSubscription } from "@/lib/subscription";
 
-const CalendarPage = async () => {
+const NewVideo = async () => {
   const isPro = await checkSubscription();
 
   return ( 
@@ -12,7 +10,7 @@ const CalendarPage = async () => {
       <Heading
         title="Neues Video erstellen"
         description="Hier kannst du ein neues interaktives Videos erstellen"
-        icon={CalendarCheck}
+        icon={Plus}
         iconColor="text-gray-700"
         bgColor="bg-gray-700/10"
       />
@@ -21,5 +19,5 @@ const CalendarPage = async () => {
    );
 }
  
-export default CalendarPage;
+export default NewVideo;
 

@@ -1,61 +1,17 @@
 "use client";
 import { FullPageChat } from "flowise-embed-react";
-import * as z from "zod";
-import axios from "axios";
-import Image from "next/image";
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ScrollText} from "lucide-react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-
 import { Heading } from "@/components/heading";
 import { useProModal } from "@/hooks/use-pro-modal";
 
-import { amountOptions, formSchema, resolutionOptions } from "./constants";
-
-const WriterPage = () => {
+const ScritpAssistant = () => {
   const proModal = useProModal();
-  const router = useRouter();
-  const [photos, setPhotos] = useState<string[]>([]);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      prompt: "",
-      amount: "1",
-      resolution: "512x512"
-    }
-  });
-
-  const isLoading = form.formState.isSubmitting;
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setPhotos([]);
-
-      const response = await axios.post('/api/image', values);
-
-      const urls = response.data.map((image: { url: string }) => image.url);
-
-      setPhotos(urls);
-    } catch (error: any) {
-      if (error?.response?.status === 403) {
-        proModal.onOpen();
-      } else {
-        toast.error("Something went wrong.");
-      }
-    } finally {
-      router.refresh();
-    }
-  }
 
   return ( 
     <div>
       <Heading
         title="Skript - Assistant"
-        description="Ich schreibe alle möglichen Texte für dich (Von E-Mails bis Grußkarten)"
+        description="Ich schreibe dir Skripte für interaktive Videos..."
         icon={ScrollText}
         iconColor="text-red-500"
         bgColor="bg-gray-700/10"
@@ -109,4 +65,4 @@ const WriterPage = () => {
    );
 }
  
-export default WriterPage;
+export default ScritpAssistant;

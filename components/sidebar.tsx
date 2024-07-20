@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Montserrat } from 'next/font/google';
 import {
-  SmilePlus,
   ListVideo,
   MonitorPlay,
   Plus,
@@ -13,14 +12,8 @@ import {
   BookMarked,
   MessageSquare,
   MailQuestion,
-  Dumbbell,
   Settings,
-  Apple,
-  CalendarCheck,
   ClipboardList,
-  Contact,
-  HeartHandshake,
-  BookLock,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 

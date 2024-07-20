@@ -18,8 +18,8 @@ export const LandingHero = () => {
           <TypewriterComponent
             options={{
               strings: [
-                "Mehr Anfragen",
                 "20x längere Watchtime",
+                "Online mehr Anfragen",
                 "Persönliche Nutzererfahrung",
                 "In Deutschland gehostet",
                 "Von Videyou entwickelt",

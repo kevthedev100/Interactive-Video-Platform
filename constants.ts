@@ -1,27 +1,24 @@
-import { SmilePlus, BookMarked, MessageSquare, Dumbbell, Apple, ScrollText } from "lucide-react";
+import {Plus, MonitorPlay, ClipboardList } from "lucide-react";
 
 export const MAX_FREE_COUNTS = 20;
 
 export const tools = [
   {
-    label: 'Skript - Assistant',
-    icon: ScrollText,
-    href: '/Writer',
-    color: "text-red-500",
-    bgColor: "bg-gray-700/10",
-  },
-  {
-    label: 'Videyou - Assistant',
-    icon: MessageSquare,
-    href: '/organisation',
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
-  },
-  {
-    label: 'Wissensdatenbank',
-    icon: BookMarked,
-    href: '/journaling',
+    label: 'Neues Video erstellen',
+    icon: Plus,
+    href: '/new-video',
     color: "text-black",
-    bgColor: "bg-gray-700/10",
   },
+  {
+    label: 'Interaktive Videos',
+    icon: MonitorPlay,
+    href: '/interactive-videos',
+    color: "text-amber-500",
+  },
+  {
+    label: 'Video-Statistiken',
+    icon: ClipboardList,
+    href: '/statistics',
+    color: "text-blue-500",
+  }
 ];

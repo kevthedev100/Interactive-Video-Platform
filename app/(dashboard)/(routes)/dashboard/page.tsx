@@ -25,7 +25,7 @@ export default function HomePage() {
       </div>
       <img src="/Komp-1_1-min.gif" alt="Beschreibung des Bildes" className="mx-auto mt-8 h-[620px]" />
       <h2 className="text-2xl md:text-4xl font-bold text-center pt-10 pb-6">
-        Business-Assistants
+        Deine Videos
         </h2>
       <div className="px-4 md:px-20 lg:px-32 space-y-4">
         {tools.map((tool) => (
@@ -43,7 +43,7 @@ export default function HomePage() {
           
         ))}
         <h2 className="text-2xl md:text-4xl font-bold text-center pt-10 pb-6">
-        Personal-Assistants
+        Mediathek
         </h2> 
       </div>
       <div className="px-4 md:px-20 lg:px-32 space-y-4">
@@ -63,7 +63,7 @@ export default function HomePage() {
         ))}
         
         <h2 className="text-2xl md:text-4xl font-bold text-center pt-10 pb-6">
-        Unique-Assistants
+        Assistenten
         </h2> 
       </div>
       <div className="px-4 md:px-20 lg:px-32 space-y-4">
@@ -83,7 +83,7 @@ export default function HomePage() {
         ))}
 
         <h2 className="text-2xl md:text-4xl font-bold text-center pt-20 pb-10">
-          Kirana interaktiv erklärt
+          Du brauchst Unterstützung?
         </h2>
         {/* Video-Embed-Code angepasst, um die gleiche Breite wie die Karten zu haben */}
         <div id='ms_frame_container' className="space-y-4 " style={{ position: 'relative', overflow: 'hidden', paddingTop: '56.25%' }}>

@@ -5,10 +5,14 @@ import Image from "next/image";
 import { Montserrat } from 'next/font/google';
 import {
   SmilePlus,
+  ListVideo,
+  MonitorPlay,
+  Plus,
   ScrollText,
   LayoutDashboard,
   BookMarked,
   MessageSquare,
+  MailQuestion,
   Dumbbell,
   Settings,
   Apple,
@@ -28,21 +32,21 @@ const poppins = Montserrat({ weight: '600', subsets: ['latin'] });
 const routes = [
 
   {
-    label: 'Writer - Assistant',
+    label: 'Skript - Assistant',
     icon: ScrollText,
-    href: '/Writer',
+    href: '/script-assistant',
     color: "text-red-500",
   },
   {
-    label: 'Organisation - Assistant',
+    label: 'Videyou - Assistant',
     icon: MessageSquare,
-    href: '/organisation',
+    href: '/videyou-assistant',
     color: "text-violet-500",
   },
   {
-    label: 'Second Brain - Business',
+    label: 'Wissensdatenbank',
     icon: BookMarked,
-    href: '/journaling',
+    href: '/knowledgebase',
     color: "text-white",
   },
 
@@ -53,31 +57,11 @@ const routes = [
 const routes4 = [
 
   {
-    label: 'Ernährungsberater - AI',
-    icon: Apple,
-    href: '/e-beratung',
+    label: 'Video-Mediathek',
+    icon: ListVideo,
+    href: '/video-library',
     color: "text-emerald-500",
-  },
-  {
-    label: 'Fitnesscoach - AI',
-    icon: Dumbbell,
-    href: '/f-beratung',
-    color: "text-amber-500",
-  },
-  {
-    label: 'Mental - AI',
-    icon: SmilePlus,
-    href: '/mental',
-    color: "text-red-300",
-  },
-  {
-    label: 'Second Brain - Personal',
-    icon: BookMarked,
-    href: '/journaling',
-    color: "text-white",
-  },
-
-  
+  }
 ];
 
 const routes5 = [
@@ -93,35 +77,23 @@ const routes5 = [
 
 const routes2 = [
   {
-    label: 'Kalender',
-    icon: CalendarCheck,
-    href: '/kalender',
-    color: "text-gray",
+    label: 'Neues Video erstellen',
+    icon: Plus,
+    href: '/new-video',
+    color: "text-white",
   },
   {
-    label: 'Taskmanager',
+    label: 'Interaktive Videos',
+    icon: MonitorPlay,
+    href: '/interactive-videos',
+    color: "text-amber-500",
+  },
+  {
+    label: 'Video-Statistiken',
     icon: ClipboardList,
-    href: '/taskmanager',
-    color: "text-gray",
-  },
-  {
-    label: 'Gewohnheiten',
-    icon: Contact,
-    href: '/e-plan',
-    color: "text-gray",
-  },
-  {
-    label: 'Fitness & Ernährung',
-    icon: HeartHandshake,
-    href: '/f-plan',
-    color: "text-gray",
-  },
-  {
-    label: 'Tagebuch',
-    icon: BookLock,
-    href: '/diary',
-    color: "text-gray",
-  },
+    href: '/statistics',
+    color: "text-blue-500",
+  }
 ];
 
 const routes3 = [
@@ -132,6 +104,16 @@ const routes3 = [
     color: "text-gray",
   },
 ];
+
+const routes6 = [
+  {
+    label: 'Persönliche Anfrage',
+    icon: MailQuestion,
+    href: '/anfrage',
+    color: "text-white",
+  },
+];
+
 
 export const Sidebar = ({
   isPro = false
@@ -145,15 +127,15 @@ export const Sidebar = ({
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white overflow-y-auto">
       <div className="px-3 py-2 flex-1">
         <Link href="/dashboard" className="flex items-center pl-3 mb-8">
-          <div className="relative h-8 w-8 mr-3">
-            <Image fill alt="Logo" src="/logo-3.png" layout="fill" />
+          <div className="relative h-10 w-10 mr-3">
+            <Image fill alt="Logo" src="/Videyou-Logo.png" layout="fill" />
           </div>
           <h1 className={cn("p-0 font-bold", poppins.className)}>
-            KI Innovationszentrum
+            Videyou
           </h1>
         </Link>
         <h2 className={cn("p-1 pt-2font-bold", poppins.className)}>
-          Deine Kirana
+          Deine Basis
         </h2>
         <div className="space-y-1">
           {routes5.map((route) => (
@@ -174,10 +156,10 @@ export const Sidebar = ({
         </div>
         
         <h2 className={cn("p-1 pt-2font-bold", poppins.className)}>
-          Business-Assistants
+          Deine Videos
         </h2>
         <div className="space-y-1">
-          {routes.map((route) => (
+          {routes2.map((route) => (
             <Link
               key={route.href}
               href={route.href}
@@ -194,7 +176,7 @@ export const Sidebar = ({
           ))}
         </div>
         <h2 className={cn("p-1 font-bold", poppins.className)}>
-          Personal-Assistants
+          Mediathek
         </h2>
         <div className="space-y-1">
           {routes4.map((route) => (
@@ -214,10 +196,10 @@ export const Sidebar = ({
           ))}
         </div>
         <h2 className={cn("p-1 font-bold", poppins.className)}>
-          Unique-Assistants
+          Assistenten
         </h2>
         <div className="space-y-1">
-          {routes5.map((route) => (
+          {routes.map((route) => (
             <Link
               key={route.href}
               href={route.href}
@@ -235,10 +217,10 @@ export const Sidebar = ({
         </div>
 
         <h2 className={cn("p-1 font-bold", poppins.className)}>
-        Anwendungshilfe
+        Anfragen
         </h2>
         <div className="space-y-1">
-          {routes5.map((route) => (
+          {routes6.map((route) => (
             <Link
               key={route.href}
               href={route.href}

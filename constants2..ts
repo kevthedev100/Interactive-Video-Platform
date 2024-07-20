@@ -5,7 +5,7 @@ export const MAX_FREE_COUNTS = 20;
 export const tools2 = [
 
   {
-    label: 'Second Brain - Unique',
+    label: 'Wissensdatenbank',
     icon: BookMarked,
     href: '/journaling',
     color: "text-black",

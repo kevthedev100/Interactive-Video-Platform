@@ -5,18 +5,18 @@ export const MAX_FREE_COUNTS = 20;
 export const tools3 = [
 
   {
-    label: 'Ernährungsberater - AI',
+    label: 'Video-Mediathek',
     icon: Apple,
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
     href: '/e-beartung',
   },
   {
-    label: 'Fitnesscoach - AI',
+    label: 'Interaktive Videos',
     icon: Dumbbell,
     color: "text-amber-500",
     bgColor: "bg-orange-700/10",
-    href: '/f-beratung',
+    href: '/interactive-videos',
   },
   {
     label: 'Mental - AI',
@@ -26,7 +26,7 @@ export const tools3 = [
     href: '/mental',
   },
   {
-    label: 'Second Brain - Personal',
+    label: 'Wissensdatenbank',
     icon: BookMarked,
     href: '/journaling',
     color: "text-black",

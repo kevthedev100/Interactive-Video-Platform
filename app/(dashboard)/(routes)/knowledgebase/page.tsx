@@ -54,7 +54,7 @@ const PhotoPage = () => {
   return ( 
     <div>
       <Heading
-        title="Second Brain"
+        title="Wissensdatenbank"
         description="Ich helfe dir dabei dich selbst besser zu verstehen und bin dein Langzeitgedächtnis."
         icon={BookMarked}
         iconColor="text-white-500"

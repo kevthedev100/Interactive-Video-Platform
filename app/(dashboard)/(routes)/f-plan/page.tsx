@@ -10,7 +10,7 @@ const CalendarPage = async () => {
   return ( 
     <div>
       <Heading
-        title="Fitness & Ernährung"
+        title="Interaktive Videos"
         description="Übersicht über deine körperlichen Ziele."
         icon={HeartHandshake}
         iconColor="text-gray-700"

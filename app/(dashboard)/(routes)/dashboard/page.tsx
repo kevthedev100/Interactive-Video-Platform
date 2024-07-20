@@ -15,15 +15,15 @@ export default function HomePage() {
 
   return (
     <div>
-      <div className="mb-8 space-y-4">
+      <div className="space-y-4">
         <h2 className="text-2xl md:text-4xl font-bold text-center">
           Videyou - Interaktive Videos
         </h2>
         <p className="text-muted-foreground font-light text-sm md:text-lg text-center px-3">
-          Erlebe die Macht deiner Kirana-KI - Die nur für dich entwickelt wurde..
+          Die Revolution im Videomarketing
         </p>
       </div>
-      <img src="/Kortana-Image-Full.png" alt="Beschreibung des Bildes" className="mx-auto mt-8 h-[620px]" />
+      <img src="/Komp-1_1-min.gif" alt="Beschreibung des Bildes" className="mx-auto mt-8 h-[620px]" />
       <h2 className="text-2xl md:text-4xl font-bold text-center pt-10 pb-6">
         Business-Assistants
         </h2>

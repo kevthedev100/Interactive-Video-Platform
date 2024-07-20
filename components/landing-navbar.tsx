@@ -25,10 +25,15 @@ export const LandingNavbar = () => {
           </h1>
         </Link>
       </div>
-      <div className="flex w-full md:w-auto justify-center md:justify-start">
+      <div className="flex w-full md:w-auto justify-center md:justify-start space-x-4">
         <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
           <Button variant="outline" className="rounded-full">
             Login
+          </Button>
+        </Link>
+        <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
+          <Button variant="premium" className="rounded-full">
+            Jetzt kostenlos registrieren
           </Button>
         </Link>
       </div>

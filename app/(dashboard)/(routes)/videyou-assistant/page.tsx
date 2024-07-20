@@ -2,44 +2,50 @@
 import { FullPageChat } from "flowise-embed-react";
 import * as z from "zod";
 import axios from "axios";
-import Image from "next/image";
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ScrollText} from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { ChatCompletionRequestMessage } from "openai";
 
+import { BotAvatar } from "@/components/bot-avatar";
 import { Heading } from "@/components/heading";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
+import { Loader } from "@/components/loader";
+import { UserAvatar } from "@/components/user-avatar";
+import { Empty } from "@/components/ui/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
 
-import { amountOptions, formSchema, resolutionOptions } from "./constants";
+import { formSchema } from "./constants";
 
-const WriterPage = () => {
-  const proModal = useProModal();
+const ConversationPage = () => {
   const router = useRouter();
-  const [photos, setPhotos] = useState<string[]>([]);
+  const proModal = useProModal();
+  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      prompt: "",
-      amount: "1",
-      resolution: "512x512"
+      prompt: ""
     }
   });
 
   const isLoading = form.formState.isSubmitting;
-
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setPhotos([]);
-
-      const response = await axios.post('/api/image', values);
-
-      const urls = response.data.map((image: { url: string }) => image.url);
-
-      setPhotos(urls);
+      const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
+      const newMessages = [...messages, userMessage];
+      
+      const response = await axios.post('/api/corganisation', { messages: newMessages });
+      setMessages((current) => [...current, userMessage, response.data]);
+      
+      form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) {
         proModal.onOpen();
@@ -51,24 +57,32 @@ const WriterPage = () => {
     }
   }
 
+  
+  /*<iframe src="https://cheat-sheet.streamlit.app/?embedded=true" width="100%" height="500">
+      </iframe>*/
+
+      /*<iframe src="https://flowise-2h8u.onrender.com/chatbot/564a7751-1584-47a7-a798-9885e7eb6a13" width="100%" height="500">
+      </iframe>*/
+
   return ( 
     <div>
       <Heading
-        title="Writer - Assistant"
-        description="Ich schreibe alle möglichen Texte für dich (Von E-Mails bis Grußkarten)"
-        icon={ScrollText}
-        iconColor="text-red-500"
-        bgColor="bg-gray-700/10"
+        title="Videyou - Assistant"
+        description="Ich plane deine Termine und deinen Kalender."
+        icon={MessageSquare}
+        iconColor="text-violet-500"
+        bgColor="bg-violet-500/10"
       />
       <div className="px-0 lg:px-8">
+      
       <FullPageChat
-            chatflowid="ab0f0592-08cc-405a-8fa3-2ec4a7cbb9bc"
+            chatflowid="c097c145-2f51-4b32-8b56-21b1f4fdab25"
             apiHost="https://flowise-2h8u.onrender.com"
             // @ts-ignore
             theme={{
                 
               button: {
-                backgroundColor: "#EF4444",
+                backgroundColor: "#8B5CF6",
                 right: 20,
                 bottom: 20,
                 size: "medium",
@@ -76,7 +90,7 @@ const WriterPage = () => {
                 customIconSrc: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg",
             },
                 chatWindow: {
-                    welcomeMessage: "Hallo, ich bin dein Texteschreiber. Benutze am besten die Sprachfunktion und ich korregiere und formatiere deinen Text. :) ",
+                    welcomeMessage: "Ich helfe dir dein Leben besser zu Organisieren und alle wichtigen Termine auf dem Schrim zu haben :) Wie kann ich dir helfen?",
                     backgroundColor: "white",
                     height: 750,
                     
@@ -86,10 +100,10 @@ const WriterPage = () => {
                         backgroundColor: "#f7f8ff",
                         textColor: "#303235",
                         showAvatar: true,
-                        avatarSrc: "writer.png",
+                        avatarSrc: "/organisation.png",
                     },
                     userMessage: {
-                        backgroundColor: "#EF4444",
+                        backgroundColor: "#8B5CF6",
                         textColor: "#ffffff",
                         showAvatar: true,
                         avatarSrc: "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvdXBsb2FkZWQvaW1nXzJkSDRtV0FNeXRtSFhDZGtMUk1ib094Y0k0UCJ9?width=80",
@@ -103,10 +117,13 @@ const WriterPage = () => {
                 }
             }}
         />
+      
         
       </div>
     </div>
+    
    );
 }
  
-export default WriterPage;
+export default ConversationPage;
+

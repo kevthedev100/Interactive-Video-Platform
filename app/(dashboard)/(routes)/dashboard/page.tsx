@@ -31,7 +31,7 @@ export default function HomePage() {
         {tools.map((tool) => (
           <Card onClick={() => router.push(tool.href)} key={tool.href} className="p-4 border-2 flex items-center justify-between hover:shadow-md transition cursor-pointer">
             <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+              <div className={cn("p-2 w-fit rounded-md", tool.color)}>
                 <tool.icon className={cn("w-8 h-8", tool.color)} />
               </div>
               <div className="font-semibold">
@@ -50,7 +50,7 @@ export default function HomePage() {
         {tools3.map((tool) => (
           <Card onClick={() => router.push(tool.href)} key={tool.href} className="p-4 border-2 flex items-center justify-between hover:shadow-md transition cursor-pointer">
             <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+              <div className={cn("p-2 w-fit rounded-md", tool.color)}>
                 <tool.icon className={cn("w-8 h-8", tool.color)} />
               </div>
               <div className="font-semibold">
@@ -70,7 +70,7 @@ export default function HomePage() {
         {tools2.map((tool) => (
           <Card onClick={() => router.push(tool.href)} key={tool.href} className="p-4 border-2 flex items-center justify-between hover:shadow-md transition cursor-pointer">
             <div className="flex items-center gap-x-4">
-              <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
+              <div className={cn("p-2 w-fit rounded-md", tool.color)}>
                 <tool.icon className={cn("w-8 h-8", tool.color)} />
               </div>
               <div className="font-semibold">

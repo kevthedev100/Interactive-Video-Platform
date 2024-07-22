@@ -1,7 +1,6 @@
 import { Plus } from "lucide-react";
 import { Heading } from "@/components/heading";
 import { checkSubscription } from "@/lib/subscription";
-
 const NewVideo = async () => {
   const isPro = await checkSubscription();
 

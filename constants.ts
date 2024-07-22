@@ -1,4 +1,4 @@
-import {Plus, MonitorPlay, ClipboardList } from "lucide-react";
+import {Plus, MonitorPlay, UserCheck  } from "lucide-react";
 
 export const MAX_FREE_COUNTS = 20;
 
@@ -17,7 +17,7 @@ export const tools = [
   },
   {
     label: 'Video-Statistiken',
-    icon: ClipboardList,
+    icon: UserCheck,
     href: '/statistics',
     color: "text-blue-500",
   }

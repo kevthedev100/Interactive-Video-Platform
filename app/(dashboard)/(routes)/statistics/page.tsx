@@ -1,4 +1,4 @@
-import { ClipboardList } from "lucide-react";
+import { UserCheck } from 'lucide-react';
 import { Heading } from "@/components/heading";
 import { checkSubscription } from "@/lib/subscription";
 const Statistics = async () => {
@@ -9,7 +9,7 @@ const Statistics = async () => {
       <Heading
         title="Video-Statistiken"
         description="Analyse deiner interaktiven Videos"
-        icon={ClipboardList}
+        icon={UserCheck}
         iconColor="text-blue-700"
         bgColor="bg-blue-700/10"
       />

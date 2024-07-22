@@ -1,8 +1,6 @@
-import { ClipboardList } from "lucide-react";
-
+import { ChartNoAxesCombined } from "lucide-react";
 import { Heading } from "@/components/heading";
 import { checkSubscription } from "@/lib/subscription";
-
 const Statistics = async () => {
   const isPro = await checkSubscription();
 
@@ -11,7 +9,7 @@ const Statistics = async () => {
       <Heading
         title="Video-Statistiken"
         description="Analyse deiner interaktiven Videos"
-        icon={ClipboardList}
+        icon={ChartNoAxesCombined}
         iconColor="text-blue-700"
         bgColor="bg-blue-700/10"
       />

@@ -43,10 +43,10 @@ export async function GET() {
           price_data: {
             currency: "EUR",
             product_data: {
-              name: "Kortana PRO",
-              description: "Kortano PRO bietet umfassende Verwaltungsmöglichkeiten für deine persönliche KI. Mit deinem Abonnement unterstützt du nicht nur die Entwicklung weiterer innovativer Funktionen, sondern profitierst auch als Frühnutzer von exklusiven Vorteilen. Dazu gehören prioritärer Zugang zu allen Updates, zusätzliche Belohnungen und einzigartige Mehrwerte, die dein Erlebnis mit Kortano PRO bereichern und personalisieren. Erlebe die Zukunft der personalisierten KI-Technologie mit Kortano PRO. Deine Partnerin für eine intelligentere und vernetztere Welt."
+              name: "Videyou Pro - Limited [25] Version",
+              description: "Wenn du dieses Paket buchst, kann man dich nur beglückwünschen. Du bist einer der ersten Nutzer von Videyou Pro und erhältst in Zukunft alle Features ohne Preisaufschlag."
             },
-            unit_amount: 9900,
+            unit_amount: 4900,
             recurring: {
               interval: "month"
             }

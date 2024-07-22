@@ -74,7 +74,7 @@ const testimonials3 = [
   {
     name: "E-Mail",
     icon: <Mail color="white" className="w-12 h-12 mx-auto" />,
-    title: "Anwort innerhalb von 24h",
+    title: "Antwort innerhalb von 24h",
     description: <a href="mailto:k.bahnmueller@videyou.de" className="text-white hover:text-red-600">k.bahnmueller@videyou.de</a>,
   },
   {

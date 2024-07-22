@@ -10,7 +10,7 @@ const Statistics = async () => {
     <div>
       <Heading
         title="Video-Statistiken"
-        description="Analyse deienr Videos"
+        description="Analyse deiner interaktiven Videos"
         icon={ClipboardList}
         iconColor="text-blue-700"
         bgColor="bg-blue-700/10"

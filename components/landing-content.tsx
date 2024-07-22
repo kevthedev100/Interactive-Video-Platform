@@ -75,19 +75,19 @@ const testimonials3 = [
     name: "E-Mail",
     icon: <Mail color="white" className="w-12 h-12 mx-auto" />,
     title: "Anwort innerhalb von 24h",
-    description: <a href="mailto:k.bahnmueller@videyou.de" className="text-red-500 hover:text-red-600">k.bahnmueller@videyou.de</a>,
+    description: <a href="mailto:k.bahnmueller@videyou.de" className="text-white hover:text-red-600">k.bahnmueller@videyou.de</a>,
   },
   {
     name: "Telefon",
     icon: <Phone color="white" className="w-12 h-12 text-emerald-500 mx-auto" />,
     title: "Gerne auch Anliegen auf die Mailbox",
-    description: <a href="tel:+491786705334" className="text-red-500 hover:text-red-600">+49 1786705334</a>,
+    description: <a href="tel:+491786705334" className="text-white hover:text-red-600">+49 1786705334</a>,
   },
   {
     name: "Termin buchen",
     icon: <CalendarCheck2 color="white" className="w-12 h-12 text-emerald-500 mx-auto" />,
     title: "Ein unverbliches Gespräch vereinbaren",
-    description: <a href="https://calendly.com/kevinbahnmueller/unverbindliches-gespraech" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-600">Termin buchen</a>,
+    description: <a href="https://calendly.com/kevinbahnmueller/unverbindliches-gespraech" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-600">Termin buchen</a>,
   }
 ];
 

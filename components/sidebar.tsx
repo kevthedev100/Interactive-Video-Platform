@@ -13,7 +13,7 @@ import {
   MessageSquare,
   MailQuestion,
   Settings,
-  ClipboardList,
+  UserCheck,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -83,7 +83,7 @@ const routes2 = [
   },
   {
     label: 'Video-Statistiken',
-    icon: ClipboardList,
+    icon: UserCheck,
     href: '/statistics',
     color: "text-blue-500",
   }

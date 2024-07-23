@@ -133,7 +133,7 @@ export const LandingContent = () => {
         ))}
       </div>
 
-      <div className="px-10 pb-10 pt-6">
+      <div className="px-0 pb-10 pt-6">
         <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Erfahre mehr über die Revolution im Videomarketing</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
           {videoTestimonials.map((testimonial, index) => (

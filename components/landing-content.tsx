@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SmilePlus, BookMarked, CalendarCheck2, Star, BrainCog, ListRestart, UserPlus, ScrollText, ListPlus, Phone, Mail, PictureInPicture2, Zap, MonitorPlay, MessagesSquare, Crown  } from "lucide-react";
+import { SmilePlus, BookMarked, CalendarCheck2, Star, BrainCog, ListRestart, UserPlus, ScrollText, ListPlus, Phone, Mail, PictureInPicture2, Zap, MonitorPlay, MessagesSquare, Crown } from "lucide-react";
 
 const testimonials = [
   {
@@ -59,7 +59,7 @@ const testimonials2 = [
   {
     name: "Premium",
     icon: <Crown color="white" className="w-12 h-12 text-red-300 mx-auto" />,
-    title: "99€ / monat",
+    title: "99€ / Monat",
     description: "In dieser Variante kannst du ein Kontingent von 100 Videosequenzen für deine interaktiven Videos nutzen.",
   },
   {
@@ -86,7 +86,7 @@ const testimonials3 = [
   {
     name: "Termin buchen",
     icon: <CalendarCheck2 color="white" className="w-12 h-12 text-emerald-500 mx-auto" />,
-    title: "Ein unverbliches Gespräch vereinbaren",
+    title: "Ein unverbindliches Gespräch vereinbaren",
     description: <a href="https://calendly.com/kevinbahnmueller/unverbindliches-gespraech" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-600">Termin buchen</a>,
   }
 ];
@@ -94,19 +94,19 @@ const testimonials3 = [
 const videoTestimonials = [
   {
     name: "Interaktive Beratung",
-    videoSrc: "path/to/your/video1.mp4",
+    videoEmbed: `<iframe src="https://embed.mindstamp.com/e/zFqSPFfzFpyw" class="video-embed" frameborder="0" allowfullscreen allow="encrypted-media; microphone; camera; geolocation" loading="lazy" scrolling="no"></iframe>`,
     title: "Einführung in neu gedachte Videos",
     description: "Ein komplett neues Vertriebsinstrument..."
   },
   {
     name: "Produkt-Tour",
-    videoSrc: "path/to/your/video2.mp4",
+    videoEmbed: `<iframe src="https://embed.mindstamp.com/e/zFqSPFfzFpyw" class="video-embed" frameborder="0" allowfullscreen allow="encrypted-media; microphone; camera; geolocation" loading="lazy" scrolling="no"></iframe>`,
     title: "Erkunde die Features",
     description: "Tauche tiefer in die vielfältigen Funktionen unserer Software ein."
   },
   {
     name: "Erfahrungsberichte",
-    videoSrc: "path/to/your/video3.mp4",
+    videoEmbed: `<iframe src="https://embed.mindstamp.com/e/zFqSPFfzFpyw" class="video-embed" frameborder="0" allowfullscreen allow="encrypted-media; microphone; camera; geolocation" loading="lazy" scrolling="no"></iframe>`,
     title: "Kundenstimmen",
     description: "Höre, was unsere Nutzer über uns zu sagen haben."
   },
@@ -134,29 +134,33 @@ export const LandingContent = () => {
       </div>
 
       <div className="px-10 pb-10 pt-6">
-      <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Erfahre mehr über die Revolution im Videomarketing</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        {videoTestimonials.map((testimonial, index) => (
-          <Card key={index} className="bg-[#2d2d2d] border-none text-white text-center px-0 py-0">
-            <div className="pt-8">
-              <video width="100%" controls>
-                <source src={testimonial.videoSrc} type="video/mp4" />
-                Ihr Browser unterstützt kein Video.
-              </video>
-            </div>
-            <CardHeader>
-              <CardTitle>
-                <p className="text-lg">{testimonial.name}</p>
-                <p className="text-zinc-400 text-sm pb-2">{testimonial.title}</p>
-              </CardTitle>
-              <CardContent>
-                {testimonial.description}
-              </CardContent>
-            </CardHeader>
-          </Card>
-        ))}
+        <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Erfahre mehr über die Revolution im Videomarketing</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+          {videoTestimonials.map((testimonial, index) => (
+            <Card key={index} className="bg-[#2d2d2d] border-none text-white text-center px-0 py-0">
+              <div className="relative overflow-hidden" style={{ paddingTop: '56.25%' }}>
+                <iframe 
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
+                  src={testimonial.videoEmbed.match(/src="([^"]+)"/)[1]} 
+                  allowFullScreen 
+                  allow="encrypted-media; microphone; camera; geolocation" 
+                  loading="lazy" 
+                  scrolling="no">
+                </iframe>
+              </div>
+              <CardHeader>
+                <CardTitle>
+                  <p className="text-lg">{testimonial.name}</p>
+                  <p className="text-zinc-400 text-sm pb-2">{testimonial.title}</p>
+                </CardTitle>
+                <CardContent>
+                  {testimonial.description}
+                </CardContent>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
       
       <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-10">Preisgestaltung</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -176,8 +180,6 @@ export const LandingContent = () => {
         ))}
       </div>
 
-    
-
       <h2 className="text-center text-3xl md:text-4xl text-white font-extrabold mb-10 pt-20">Sprech einfach mit uns</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8 pb-20">
         {testimonials3.map((item, index) => (
@@ -196,34 +198,29 @@ export const LandingContent = () => {
         ))}
       </div>
 
-
-
-{/* Footer-Bereich */}
-<div className="w-full mt-10">
-  <footer className="flex flex-wrap justify-between items-center px-10 py-4 bg-[#2d2d2d] text-white text-sm md:text-base">
-    <div className="footer-item w-full md:w-auto mb-4 md:mb-0">
-      <a href="http://www.impressum.de" target="_blank" rel="noopener noreferrer" className="hover:underline">
-        Impressum
-      </a>
+      {/* Footer-Bereich */}
+      <div className="w-full mt-10">
+        <footer className="flex flex-wrap justify-between items-center px-10 py-4 bg-[#2d2d2d] text-white text-sm md:text-base">
+          <div className="footer-item w-full md:w-auto mb-4 md:mb-0">
+            <a href="http://www.impressum.de" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              Impressum
+            </a>
+          </div>
+          <div className="footer-item w-full md:w-auto mb-4 md:mb-0">
+            <a href="http://www.datenschutz.de" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              Datenschutzerklärung
+            </a>
+          </div>
+          <div className="footer-item w-full md:w-auto mb-4 md:mb-0">
+            <a href="http://www.AGB.de" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              AGB
+            </a>
+          </div>
+          <div className="footer-item w-full md:w-auto">
+            © Videoyou 2024
+          </div>
+        </footer>
+      </div>
     </div>
-    <div className="footer-item w-full md:w-auto mb-4 md:mb-0">
-      <a href="http://www.datenschutz.de" target="_blank" rel="noopener noreferrer" className="hover:underline">
-        Datenschutzerklärung
-      </a>
-    </div>
-    <div className="footer-item w-full md:w-auto mb-4 md:mb-0">
-      <a href="http://www.AGB.de" target="_blank" rel="noopener noreferrer" className="hover:underline">
-        AGB
-      </a>
-    </div>
-    <div className="footer-item w-full md:w-auto">
-      © Videoyou 2024
-    </div>
-  </footer>
-</div>
-
-
-</div>
-    
   );
 };

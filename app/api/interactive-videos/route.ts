@@ -2,16 +2,13 @@ import { NextResponse } from 'next/server';
 import prismadb from '@/lib/prismadb';
 
 export const POST = async (req: Request) => {
-  const { title, videoId, buttons } = await req.json();
+  const { title, videoId } = await req.json();
 
   try {
     const interactiveVideo = await prismadb.interactiveVideo.create({
       data: {
         title,
         videoId,
-        buttons: {
-          create: buttons,
-        },
       },
     });
 

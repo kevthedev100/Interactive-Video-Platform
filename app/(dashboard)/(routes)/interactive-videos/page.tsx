@@ -8,9 +8,11 @@ import { useProModal } from "@/hooks/use-pro-modal";
 const InteractiveVideos = () => {
   const proModal = useProModal();
   const [videos, setVideos] = useState([]);
+  const [interactiveVideoId, setInteractiveVideoId] = useState<string | null>(null);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [buttons, setButtons] = useState([]);
   const [videoTitle, setVideoTitle] = useState('');
+  const [selectedVideo, setSelectedVideo] = useState('');
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
@@ -28,12 +30,43 @@ const InteractiveVideos = () => {
     };
 
     fetchVideos();
-  }, []);
+  }, []); // Leerer Dependency-Array sorgt dafür, dass useEffect nur einmal ausgeführt wird
 
   const handlePlayVideo = (videoId: string) => {
     if (iframeRef.current) {
       iframeRef.current.src = `https://iframe.mediadelivery.net/embed/275360/${videoId}?autoplay=true`;
       setPlayingVideo(videoId);
+    }
+  };
+
+  const createInteractiveVideo = async () => {
+    if (!videoTitle || !selectedVideo) {
+      alert("Bitte alle Felder ausfüllen.");
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/interactive-videos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: videoTitle,
+          videoId: selectedVideo,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create interactive video');
+      }
+
+      const data = await response.json();
+      setInteractiveVideoId(data.id);
+      setPlayingVideo(selectedVideo);
+      console.log('Interaktives Video erstellt:', data);
+    } catch (error) {
+      console.error('Error creating interactive video:', error);
     }
   };
 
@@ -59,33 +92,46 @@ const InteractiveVideos = () => {
     updateButton(id, { [property]: value });
   };
 
-  const saveButton = (id) => {
+  const saveButton = async (id) => {
     const button = buttons.find(button => button.id === id);
     if (!button.label || !button.link || button.width <= 0 || button.height <= 0 || button.top < 0 || button.left < 0) {
       alert("Bitte alle Felder für den Button ausfüllen.");
       return;
     }
 
-    console.log("Button gespeichert:", button);
-  };
-
-  const saveButtons = async () => {
-    if (!videoTitle || !playingVideo || buttons.length === 0) {
-      alert("Bitte alle Felder ausfüllen und mindestens einen Button hinzufügen.");
-      return;
-    }
-
     try {
-      const response = await fetch('/api/interactive-videos', {
+      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          title: videoTitle,
-          videoId: playingVideo,
-          buttons,
-        }),
+        body: JSON.stringify([button]),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save button');
+      }
+
+      const data = await response.json();
+      console.log('Button gespeichert:', data);
+    } catch (error) {
+      console.error('Error saving button:', error);
+    }
+  };
+
+  const saveButtons = async () => {
+    if (!interactiveVideoId) {
+      alert("Bitte erstellen Sie zuerst ein interaktives Video.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(buttons),
       });
 
       if (!response.ok) {
@@ -119,13 +165,29 @@ const InteractiveVideos = () => {
         className="mb-4 w-full p-2 border rounded-md"
       />
 
+      <select
+        value={selectedVideo}
+        onChange={(e) => setSelectedVideo(e.target.value)}
+        className="mb-4 w-full p-2 border rounded-md"
+      >
+        <option value="">Wähle ein Startvideo</option>
+        {videos.map(video => (
+          <option key={video.guid} value={video.guid}>
+            {video.title}
+          </option>
+        ))}
+      </select>
 
-      {videos.length > 0 && (
-        <div className="relative">
+      <button onClick={createInteractiveVideo} className="bg-blue-500 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+        Interaktives Video erstellen
+      </button>
+
+      {playingVideo && (
+        <div className="relative mb-4">
           <div style={{ position: 'relative', paddingTop: '56.25%' }}>
             <iframe
               ref={iframeRef}
-              src={`https://iframe.mediadelivery.net/embed/275360/${videos[0].guid}?autoplay=false`}
+              src={`https://iframe.mediadelivery.net/embed/275360/${playingVideo}?autoplay=false`}
               loading="lazy"
               style={{ border: 'none', position: 'absolute', top: 0, height: '100%', width: '100%' }}
               allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
@@ -147,18 +209,6 @@ const InteractiveVideos = () => {
                 {button.label}
               </div>
             ))}
-            <button
-              onClick={() => handlePlayVideo(videos[1].guid)}
-              className="absolute top-2 left-2 bg-amber-500 text-white px-2 py-1 rounded-md"
-            >
-              Play Next Video
-            </button>
-            <button
-              onClick={() => handlePlayVideo(videos[2].guid)}
-              className="absolute top-2 right-2 bg-amber-500 text-white px-2 py-1 rounded-md"
-            >
-              Play Another Video
-            </button>
           </div>
         </div>
       )}
@@ -170,7 +220,6 @@ const InteractiveVideos = () => {
       <button onClick={addNewButton} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
         + Neuen Button erstellen
       </button>
-
 
       {buttons.map(button => (
         <div key={button.id} className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -259,7 +308,7 @@ const InteractiveVideos = () => {
 
       {buttons.length > 0 && (
         <button onClick={saveButtons} className="bg-green-800 text-white px-4 py-4 rounded-md mt-4 w-full">
-          Alle Buttons speichern
+          Video Speichern
         </button>
       )}
     </div>

@@ -269,7 +269,7 @@ const InteractiveVideos = () => {
 
       {buttons.map((button, index) => (
         <div key={button.id}>
-          <h2 className="text-center text-white bg-gray-800 py-2 rounded-md">Button {index + 1}</h2>
+          <h2 className="text-center text-white bg-gray-500 py-2 rounded-md mb-4">Button {index + 1}</h2>
           <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="font-bold">Beschriftung:

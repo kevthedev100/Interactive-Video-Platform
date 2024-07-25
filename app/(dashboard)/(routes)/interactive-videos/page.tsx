@@ -204,7 +204,7 @@ const InteractiveVideos = () => {
             ))}
           </select>
 
-          <button onClick={createInteractiveVideo} className="bg-green-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={createInteractiveVideo} className="bg-blue-500 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Interaktives Video erstellen
           </button>
         </>
@@ -258,10 +258,10 @@ const InteractiveVideos = () => {
 
       {isButtonTypeSelectionVisible && (
         <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button onClick={() => addNewButton('video')} className="bg-blue-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={() => addNewButton('video')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Neues Video auswählen
           </button>
-          <button onClick={() => addNewButton('link')} className="bg-blue-600 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={() => addNewButton('link')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Link auswählen
           </button>
         </div>
@@ -273,7 +273,7 @@ const InteractiveVideos = () => {
             <h2 className="text-lg font-semibold text-white bg-gray-800 w-full py-2">Button {index + 1}</h2>
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Beschriftung:
               <input 
                 type="text" 
@@ -285,7 +285,7 @@ const InteractiveVideos = () => {
           </div>
           {button.type === 'video' && (
             <div>
-              <label>
+              <label className="font-bold">
                 Video:
                 <select 
                   value={button.link} 
@@ -305,7 +305,7 @@ const InteractiveVideos = () => {
           )}
           {button.type === 'link' && (
             <div>
-              <label>
+              <label className="font-bold">
                 URL:
                 <input 
                   type="text" 
@@ -317,7 +317,7 @@ const InteractiveVideos = () => {
             </div>
           )}
           <div>
-            <label>
+            <label className="font-bold">
               Hintergrundfarbe (Hex):
               <input 
                 type="text" 
@@ -328,7 +328,7 @@ const InteractiveVideos = () => {
             </label>
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Textfarbe (Hex):
               <input 
                 type="text" 
@@ -339,7 +339,7 @@ const InteractiveVideos = () => {
             </label>
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Icon:
               <input 
                 type="text" 
@@ -350,7 +350,7 @@ const InteractiveVideos = () => {
             </label>
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Breite (%):
               <input 
                 type="number" 
@@ -361,7 +361,7 @@ const InteractiveVideos = () => {
             </label>
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Höhe (%):
               <input 
                 type="number" 
@@ -372,7 +372,7 @@ const InteractiveVideos = () => {
             </label>
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Oben (%):
               <input 
                 type="number" 
@@ -383,7 +383,7 @@ const InteractiveVideos = () => {
             </label>
           </div>
           <div>
-            <label>
+            <label className="font-bold">
               Links (%):
               <input 
                 type="number" 

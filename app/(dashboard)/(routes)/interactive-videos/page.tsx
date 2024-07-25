@@ -16,6 +16,7 @@ const InteractiveVideos = () => {
   const [selectedVideo, setSelectedVideo] = useState('');
   const [isInteractiveVideoCreated, setIsInteractiveVideoCreated] = useState(false);
   const [isButtonTypeSelectionVisible, setIsButtonTypeSelectionVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
@@ -103,12 +104,18 @@ const InteractiveVideos = () => {
   };
 
   const handleButtonClick = (button) => {
+    if (!button.label || (button.type === 'video' && !button.link) || (button.type === 'link' && !button.url)) {
+      setErrorMessage("Du musst alle Felder ausfüllen.");
+      return;
+    }
+
     if (button.url) {
       window.open(button.url, '_blank');
     } else {
       handlePlayVideo(button.link);
     }
     updateButton(button.id, { isVisible: false });
+    setErrorMessage('');
   };
 
   const saveButton = async (id) => {
@@ -400,6 +407,12 @@ const InteractiveVideos = () => {
         <button onClick={saveButtons} className="bg-green-800 text-white px-4 py-4 rounded-md mt-4 w-full">
           Alle Buttons speichern
         </button>
+      )}
+
+      {errorMessage && (
+        <div className="text-red-500 font-bold text-center mt-4">
+          {errorMessage}
+        </div>
       )}
     </div>
   );

@@ -12,6 +12,7 @@ const VideoPage = () => {
   const [collectionId, setCollectionId] = useState("");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videos, setVideos] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -38,6 +39,8 @@ const VideoPage = () => {
       return;
     }
 
+    setIsUploading(true);
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("thumbnailTime", thumbnailTime.toString());
@@ -61,6 +64,8 @@ const VideoPage = () => {
     } catch (error) {
       console.error(error);
       alert(`Error uploading video: ${error.message}`);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -131,13 +136,19 @@ const VideoPage = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
-        <div className="px-8">
+        <div className="px-8 flex items-center">
           <button
             type="submit"
             className="inline-flex items-center px-8 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
           >
             Upload Video
           </button>
+          {isUploading && (
+            <div className="ml-4 flex items-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
+              <span className="ml-2 text-gray-700">Wir optimieren dein Video - Dauer 1-2 Minuten</span>
+            </div>
+          )}
         </div>
       </form>
 

@@ -15,6 +15,7 @@ const InteractiveVideos = () => {
   const [videoTitle, setVideoTitle] = useState('');
   const [selectedVideo, setSelectedVideo] = useState('');
   const [isInteractiveVideoCreated, setIsInteractiveVideoCreated] = useState(false);
+  const [isButtonTypeSelectionVisible, setIsButtonTypeSelectionVisible] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
@@ -73,20 +74,22 @@ const InteractiveVideos = () => {
     }
   };
 
-  const addNewButton = () => {
+  const addNewButton = (type: 'video' | 'link') => {
     setButtons([...buttons, {
       id: Date.now(),
       label: 'Neuer Button',
       link: '',
+      url: '',
+      type,
       backgroundColor: 'rgba(0, 0, 0, 0.5)', // Standard-Hintergrundfarbe halb-transparent Schwarz
       textColor: '#ffffff', // Standard-Textfarbe Weiß
       icon: '',
-      url: '',
       width: 45, // Standard-Breite
       height: 8, // Standard-Höhe
       top: 84, // Standard-Position von oben
       left: 2, // Standard-Position von links
     }]);
+    setIsButtonTypeSelectionVisible(false); // Ausblendung der Auswahl nach der Erstellung
   };
 
   const updateButton = (id, newProperties) => {
@@ -201,7 +204,7 @@ const InteractiveVideos = () => {
             ))}
           </select>
 
-          <button onClick={createInteractiveVideo} className="bg-blue-500 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={createInteractiveVideo} className="bg-green-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Interaktives Video erstellen
           </button>
         </>
@@ -247,14 +250,28 @@ const InteractiveVideos = () => {
         <p className="text-center text-gray-500 mt-4">Keine Videos verfügbar.</p>
       )}
 
-      {interactiveVideoId && (
-        <button onClick={addNewButton} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+      {interactiveVideoId && !isButtonTypeSelectionVisible && (
+        <button onClick={() => setIsButtonTypeSelectionVisible(true)} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
           + Neuen Button erstellen
         </button>
       )}
 
-      {buttons.map(button => (
+      {isButtonTypeSelectionVisible && (
+        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button onClick={() => addNewButton('video')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+            Neues Video auswählen
+          </button>
+          <button onClick={() => addNewButton('link')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+            Link auswählen
+          </button>
+        </div>
+      )}
+
+      {buttons.map((button, index) => (
         <div key={button.id} className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="col-span-2 text-center">
+            <h2 className="text-lg font-semibold text-white bg-gray-800 w-full py-2">Button {index + 1}</h2>
+          </div>
           <div>
             <label>
               Beschriftung:
@@ -266,36 +283,39 @@ const InteractiveVideos = () => {
               />
             </label>
           </div>
-          <div>
-            <label>
-              Video:
-              <select 
-                value={button.link} 
-                onChange={(e) => handleInputChange(button.id, 'link', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-                disabled={button.url !== ''}
-              >
-                <option value="">Wähle ein Video</option>
-                {videos.map(video => (
-                  <option key={video.guid} value={video.guid}>
-                    {video.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <div>
-            <label>
-              URL:
-              <input 
-                type="text" 
-                value={button.url} 
-                onChange={(e) => handleInputChange(button.id, 'url', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-                disabled={button.link !== ''}
-              />
-            </label>
-          </div>
+          {button.type === 'video' && (
+            <div>
+              <label>
+                Video:
+                <select 
+                  value={button.link} 
+                  onChange={(e) => handleInputChange(button.id, 'link', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  disabled={button.url !== ''}
+                >
+                  <option value="">Wähle ein Video</option>
+                  {videos.map(video => (
+                    <option key={video.guid} value={video.guid}>
+                      {video.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          )}
+          {button.type === 'link' && (
+            <div>
+              <label>
+                URL:
+                <input 
+                  type="text" 
+                  value={button.url} 
+                  onChange={(e) => handleInputChange(button.id, 'url', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+          )}
           <div>
             <label>
               Hintergrundfarbe (Hex):

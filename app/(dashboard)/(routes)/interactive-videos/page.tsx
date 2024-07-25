@@ -204,7 +204,7 @@ const InteractiveVideos = () => {
             ))}
           </select>
 
-          <button onClick={createInteractiveVideo} className="bg-blue-500 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={createInteractiveVideo} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Interaktives Video erstellen
           </button>
         </>
@@ -258,148 +258,138 @@ const InteractiveVideos = () => {
 
       {isButtonTypeSelectionVisible && (
         <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button onClick={() => addNewButton('video')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={() => addNewButton('video')} className="bg-blue-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Neues Video auswählen
           </button>
-          <button onClick={() => addNewButton('link')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={() => addNewButton('link')} className="bg-orange-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Link auswählen
           </button>
         </div>
       )}
 
       {buttons.map((button, index) => (
-        <div key={button.id} className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="col-span-2 text-center">
-            <h2 className="text-lg font-semibold text-white bg-gray-800 w-full py-2">Button {index + 1}</h2>
-          </div>
-          <div>
-            <label className="font-bold">
-              Beschriftung:
-              <input 
-                type="text" 
-                value={button.label} 
-                onChange={(e) => handleInputChange(button.id, 'label', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          {button.type === 'video' && (
+        <div key={button.id}>
+          <h2 className="text-center text-white bg-gray-800 py-2 rounded-md">Button {index + 1}</h2>
+          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="font-bold">
-                Video:
-                <select 
-                  value={button.link} 
-                  onChange={(e) => handleInputChange(button.id, 'link', e.target.value)} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
-                  disabled={button.url !== ''}
-                >
-                  <option value="">Wähle ein Video</option>
-                  {videos.map(video => (
-                    <option key={video.guid} value={video.guid}>
-                      {video.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          )}
-          {button.type === 'link' && (
-            <div>
-              <label className="font-bold">
-                URL:
+              <label className="font-bold">Beschriftung:
                 <input 
                   type="text" 
-                  value={button.url} 
-                  onChange={(e) => handleInputChange(button.id, 'url', e.target.value)} 
+                  value={button.label} 
+                  onChange={(e) => handleInputChange(button.id, 'label', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
-          )}
-          <div>
-            <label className="font-bold">
-              Hintergrundfarbe (Hex):
-              <input 
-                type="text" 
-                value={button.backgroundColor} 
-                onChange={(e) => handleInputChange(button.id, 'backgroundColor', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="font-bold">
-              Textfarbe (Hex):
-              <input 
-                type="text" 
-                value={button.textColor} 
-                onChange={(e) => handleInputChange(button.id, 'textColor', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="font-bold">
-              Icon:
-              <input 
-                type="text" 
-                value={button.icon} 
-                onChange={(e) => handleInputChange(button.id, 'icon', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="font-bold">
-              Breite (%):
-              <input 
-                type="number" 
-                value={button.width} 
-                onChange={(e) => handleInputChange(button.id, 'width', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="font-bold">
-              Höhe (%):
-              <input 
-                type="number" 
-                value={button.height} 
-                onChange={(e) => handleInputChange(button.id, 'height', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="font-bold">
-              Oben (%):
-              <input 
-                type="number" 
-                value={button.top} 
-                onChange={(e) => handleInputChange(button.id, 'top', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="font-bold">
-              Links (%):
-              <input 
-                type="number" 
-                value={button.left} 
-                onChange={(e) => handleInputChange(button.id, 'left', e.target.value)} 
-                className="ml-2 px-2 py-1 border rounded-md w-full"
-              />
-            </label>
-          </div>
-          <div>
-            <button
-              onClick={() => saveButton(button.id)}
-              className="bg-green-500 text-white px-2 py-1 rounded-md mt-2 w-full"
-            >
-              Diesen Button speichern
-            </button>
+            {button.type === 'video' && (
+              <div>
+                <label className="font-bold">Video:
+                  <select 
+                    value={button.link} 
+                    onChange={(e) => handleInputChange(button.id, 'link', e.target.value)} 
+                    className="ml-2 px-2 py-1 border rounded-md w-full"
+                    disabled={button.url !== ''}
+                  >
+                    <option value="">Wähle ein Video</option>
+                    {videos.map(video => (
+                      <option key={video.guid} value={video.guid}>
+                        {video.title}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+            {button.type === 'link' && (
+              <div>
+                <label className="font-bold">URL:
+                  <input 
+                    type="text" 
+                    value={button.url} 
+                    onChange={(e) => handleInputChange(button.id, 'url', e.target.value)} 
+                    className="ml-2 px-2 py-1 border rounded-md w-full"
+                  />
+                </label>
+              </div>
+            )}
+            <div>
+              <label className="font-bold">Hintergrundfarbe (Hex):
+                <input 
+                  type="text" 
+                  value={button.backgroundColor} 
+                  onChange={(e) => handleInputChange(button.id, 'backgroundColor', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="font-bold">Textfarbe (Hex):
+                <input 
+                  type="text" 
+                  value={button.textColor} 
+                  onChange={(e) => handleInputChange(button.id, 'textColor', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="font-bold">Icon:
+                <input 
+                  type="text" 
+                  value={button.icon} 
+                  onChange={(e) => handleInputChange(button.id, 'icon', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="font-bold">Breite (%):
+                <input 
+                  type="number" 
+                  value={button.width} 
+                  onChange={(e) => handleInputChange(button.id, 'width', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="font-bold">Höhe (%):
+                <input 
+                  type="number" 
+                  value={button.height} 
+                  onChange={(e) => handleInputChange(button.id, 'height', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="font-bold">Oben (%):
+                <input 
+                  type="number" 
+                  value={button.top} 
+                  onChange={(e) => handleInputChange(button.id, 'top', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="font-bold">Links (%):
+                <input 
+                  type="number" 
+                  value={button.left} 
+                  onChange={(e) => handleInputChange(button.id, 'left', e.target.value)} 
+                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                />
+              </label>
+            </div>
+            <div>
+              <button
+                onClick={() => saveButton(button.id)}
+                className="bg-green-500 text-white px-2 py-1 rounded-md mt-2 w-full"
+              >
+                Diesen Button speichern
+              </button>
+            </div>
           </div>
         </div>
       ))}
@@ -414,3 +404,4 @@ const InteractiveVideos = () => {
 };
 
 export default InteractiveVideos;
+

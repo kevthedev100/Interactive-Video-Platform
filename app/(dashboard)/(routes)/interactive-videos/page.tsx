@@ -258,10 +258,10 @@ const InteractiveVideos = () => {
 
       {isButtonTypeSelectionVisible && (
         <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button onClick={() => addNewButton('video')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={() => addNewButton('video')} className="bg-blue-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Neues Video auswählen
           </button>
-          <button onClick={() => addNewButton('link')} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button onClick={() => addNewButton('link')} className="bg-blue-600 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Link auswählen
           </button>
         </div>

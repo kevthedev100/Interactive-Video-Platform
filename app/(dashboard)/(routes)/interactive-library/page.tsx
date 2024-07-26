@@ -36,7 +36,7 @@ const InteractiveLibrary = () => {
         title="Interaktive Videos"
         description="Übersicht über deine interaktiven Videos"
         icon={MonitorPlay}
-        iconColor="text-emerald-500"
+        iconColor="text-amber-500"
         bgColor="bg-emerald-500/10"
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-8">

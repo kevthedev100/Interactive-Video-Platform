@@ -17,6 +17,7 @@ const InteractiveVideos = () => {
   const [isInteractiveVideoCreated, setIsInteractiveVideoCreated] = useState(false);
   const [isButtonTypeSelectionVisible, setIsButtonTypeSelectionVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [savedMessage, setSavedMessage] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
@@ -77,7 +78,6 @@ const InteractiveVideos = () => {
 
   const addNewButton = (type: 'video' | 'link') => {
     setButtons([...buttons, {
-      // Entferne die id hier
       label: 'Neuer Button',
       link: '',
       url: '',
@@ -141,6 +141,11 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Button gespeichert:', data);
+      setSavedMessage(true);
+
+      setTimeout(() => {
+        setSavedMessage(false);
+      }, 3000); // Blendet die Erfolgsnachricht nach 3 Sekunden aus
     } catch (error) {
       console.error('Error saving button:', error);
     }
@@ -167,6 +172,11 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Buttons gespeichert:', data);
+      setSavedMessage(true);
+
+      setTimeout(() => {
+        setSavedMessage(false);
+      }, 3000); // Blendet die Erfolgsnachricht nach 3 Sekunden aus
     } catch (error) {
       console.error('Error saving buttons:', error);
     }
@@ -397,6 +407,9 @@ const InteractiveVideos = () => {
               >
                 Diesen Button speichern
               </button>
+              {savedMessage && (
+                <p className="text-green-500 text-center mt-2">Button gespeichert</p>
+              )}
             </div>
           </div>
         </div>

@@ -6,13 +6,13 @@ export const tools = [
   {
     label: 'Neues Video erstellen',
     icon: Plus,
-    href: '/new-video',
+    href: '/interactive-videos',
     color: "text-black",
   },
   {
     label: 'Interaktive Videos',
     icon: MonitorPlay,
-    href: '/interactive-videos',
+    href: '/interactive-library',
     color: "text-amber-500",
   },
   {

@@ -164,8 +164,8 @@ const VideoPage = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-8">
           {videos.map((video) => (
-            <div key={video.guid} className="border border-gray-300 p-4 rounded-md">
-              <h3 className="text-md font-medium">{video.title}</h3>
+            <div key={video.guid} className="border border-gray-300 p-4 rounded-md bg-gray-900">
+              <h3 className="text-lg font-bold pb-4 text-center text-white">{video.title}</h3>
               <div style={{ position: 'relative', paddingTop: '56.25%' }}>
                 <iframe
                   src={`https://iframe.mediadelivery.net/embed/275360/${video.guid}?autoplay=false`}
@@ -175,7 +175,7 @@ const VideoPage = () => {
                   allowFullScreen
                 ></iframe>
               </div>
-              <p className="text-sm text-gray-500 mt-2">Video ID: {video.guid}</p>
+              <p className="text-sm text-gray-500 mt-2 text-center text-white">Video ID: {video.guid}</p>
             </div>
           ))}
         </div>

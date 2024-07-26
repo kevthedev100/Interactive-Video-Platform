@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MonitorPlay } from "lucide-react";
+import { MonitorPlay, Plus } from "lucide-react";
 import { Heading } from "@/components/heading";
 import { useProModal } from "@/hooks/use-pro-modal";
 import * as lucideIcons from "lucide-react";
@@ -178,15 +178,14 @@ const InteractiveVideos = () => {
 
   return (
     <div className="p-4">
-      <div className="mb-6">
-        <Heading
-          title="Interaktive Videos"
-          description="Übersicht über deine Videos"
-          icon={MonitorPlay}
-          iconColor="text-amber-500"
-          bgColor="bg-orange-700/10"
-        />
-      </div>
+      <Heading
+        title="Neues Video erstellen"
+        description="Hier kannst du ein neues interaktives Videos erstellen"
+        icon={Plus}
+        iconColor="text-gray-700"
+        bgColor="bg-gray-700/10"
+      />
+    
 
       {!isInteractiveVideoCreated && (
         <>

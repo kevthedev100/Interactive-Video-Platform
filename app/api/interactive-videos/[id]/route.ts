@@ -16,8 +16,16 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
 
     const createdButton = await prismadb.button.create({
       data: {
-        ...button,
+        label: button.label,
+        link: button.link,
+        width: button.width,
+        height: button.height,
+        top: button.top,
+        left: button.left,
         videoId: id,
+        backgroundColor: button.backgroundColor,
+        textColor: button.textColor,
+        icon: button.icon,
       },
     });
 

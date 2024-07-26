@@ -43,15 +43,18 @@ model InteractiveVideo {
 }
 
 model Button {
-  id          String   @id @default(cuid())
-  label       String
-  link        String
-  width       Float
-  height      Float
-  top         Float
-  left        Float
-  videoId     String
-  video       InteractiveVideo @relation(fields: [videoId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  label          String
+  link           String
+  width          Float
+  height         Float
+  top            Float
+  left           Float
+  backgroundColor String
+  textColor      String
+  icon           String?
+  videoId        String
+  video          InteractiveVideo @relation(fields: [videoId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

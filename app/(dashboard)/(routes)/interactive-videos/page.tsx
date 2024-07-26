@@ -77,7 +77,7 @@ const InteractiveVideos = () => {
 
   const addNewButton = (type: 'video' | 'link') => {
     setButtons([...buttons, {
-      id: Date.now(),
+      // Entferne die id hier
       label: 'Neuer Button',
       link: '',
       url: '',
@@ -93,17 +93,18 @@ const InteractiveVideos = () => {
     setIsButtonTypeSelectionVisible(false); // Ausblendung der Auswahl nach der Erstellung
   };
 
-  const updateButton = (id, newProperties) => {
-    setButtons(buttons.map(button => 
-      button.id === id ? { ...button, ...newProperties } : button
-    ));
+  const updateButton = (index, newProperties) => {
+    const newButtons = [...buttons];
+    newButtons[index] = { ...newButtons[index], ...newProperties };
+    setButtons(newButtons);
   };
 
-  const handleInputChange = (id, property, value) => {
-    updateButton(id, { [property]: value });
+  const handleInputChange = (index, property, value) => {
+    updateButton(index, { [property]: value });
   };
 
-  const handleButtonClick = (button) => {
+  const handleButtonClick = (index) => {
+    const button = buttons[index];
     if (!button.label || (button.type === 'video' && !button.link) || (button.type === 'link' && !button.url)) {
       setErrorMessage("Du musst alle Felder ausfüllen.");
       return;
@@ -114,12 +115,12 @@ const InteractiveVideos = () => {
     } else {
       handlePlayVideo(button.link);
     }
-    updateButton(button.id, { isVisible: false });
+    updateButton(index, { isVisible: false });
     setErrorMessage('');
   };
 
-  const saveButton = async (id) => {
-    const button = buttons.find(button => button.id === id);
+  const saveButton = async (index) => {
+    const button = buttons[index];
     if (!button.label || button.width <= 0 || button.height <= 0 || button.top < 0 || button.left < 0) {
       alert("Bitte alle Felder für den Button ausfüllen.");
       return;
@@ -185,7 +186,6 @@ const InteractiveVideos = () => {
         iconColor="text-gray-700"
         bgColor="bg-gray-700/10"
       />
-    
 
       {!isInteractiveVideoCreated && (
         <>
@@ -227,10 +227,10 @@ const InteractiveVideos = () => {
               allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
               allowFullScreen
             ></iframe>
-            {buttons.map(button => (
+            {buttons.map((button, index) => (
               button.isVisible !== false && (
                 <div 
-                  key={button.id} 
+                  key={index} 
                   className="absolute flex items-center justify-center rounded-md"
                   style={{
                     width: `${button.width}%`,
@@ -241,7 +241,7 @@ const InteractiveVideos = () => {
                     color: button.textColor,
                     cursor: 'pointer',
                   }}
-                  onClick={() => handleButtonClick(button)}
+                  onClick={() => handleButtonClick(index)}
                 >
                   {button.icon && renderIcon(button.icon)}
                   {button.label}
@@ -274,7 +274,7 @@ const InteractiveVideos = () => {
       )}
 
       {buttons.map((button, index) => (
-        <div key={button.id}>
+        <div key={index}>
           <h2 className="text-center text-white bg-gray-500 py-2 rounded-md mb-4">
             Button {index + 1} - {button.type === 'video' ? 'Video wechseln' : 'Link'}
           </h2>
@@ -284,7 +284,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="text" 
                   value={button.label} 
-                  onChange={(e) => handleInputChange(button.id, 'label', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'label', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -294,7 +294,7 @@ const InteractiveVideos = () => {
                 <label className="font-bold">Video:
                   <select 
                     value={button.link} 
-                    onChange={(e) => handleInputChange(button.id, 'link', e.target.value)} 
+                    onChange={(e) => handleInputChange(index, 'link', e.target.value)} 
                     className="ml-2 px-2 py-1 border rounded-md w-full"
                     disabled={button.url !== ''}
                   >
@@ -314,7 +314,7 @@ const InteractiveVideos = () => {
                   <input 
                     type="text" 
                     value={button.url} 
-                    onChange={(e) => handleInputChange(button.id, 'url', e.target.value)} 
+                    onChange={(e) => handleInputChange(index, 'url', e.target.value)} 
                     className="ml-2 px-2 py-1 border rounded-md w-full"
                   />
                 </label>
@@ -325,7 +325,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="text" 
                   value={button.backgroundColor} 
-                  onChange={(e) => handleInputChange(button.id, 'backgroundColor', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'backgroundColor', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -335,7 +335,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="text" 
                   value={button.textColor} 
-                  onChange={(e) => handleInputChange(button.id, 'textColor', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'textColor', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -345,7 +345,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="text" 
                   value={button.icon} 
-                  onChange={(e) => handleInputChange(button.id, 'icon', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'icon', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -355,7 +355,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.width} 
-                  onChange={(e) => handleInputChange(button.id, 'width', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'width', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -365,7 +365,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.height} 
-                  onChange={(e) => handleInputChange(button.id, 'height', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'height', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -375,7 +375,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.top} 
-                  onChange={(e) => handleInputChange(button.id, 'top', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'top', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -385,14 +385,14 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.left} 
-                  onChange={(e) => handleInputChange(button.id, 'left', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'left', e.target.value)} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             <div>
               <button
-                onClick={() => saveButton(button.id)}
+                onClick={() => saveButton(index)}
                 className="bg-green-500 text-white px-2 py-1 rounded-md mt-2 w-full"
               >
                 Diesen Button speichern

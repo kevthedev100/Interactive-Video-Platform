@@ -27,7 +27,11 @@ const InteractiveLibrary = () => {
   }, []);
 
   const handleEdit = (id) => {
-    router.push(`/dashboard/interactive-videos/${id}/edit`);
+    router.push(`/interactive-videos/${id}/edit`);
+  };
+
+  const handleShare = (videoId) => {
+    router.push(`/interactive-videos/${videoId}/view`);
   };
 
   return (
@@ -53,12 +57,20 @@ const InteractiveLibrary = () => {
               ></iframe>
             </div>
             <p className="text-sm text-gray-500 mt-2 text-center text-white">Video ID: {video.videoId}</p>
-            <button
-              onClick={() => handleEdit(video.id)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 w-full"
-            >
-              Bearbeiten
-            </button>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => handleEdit(video.id)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              >
+                Bearbeiten
+              </button>
+              <button
+                onClick={() => handleShare(video.id)}
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
+              >
+                Teilen
+              </button>
+            </div>
           </div>
         ))}
       </div>

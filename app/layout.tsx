@@ -5,7 +5,6 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { ToasterProvider } from '@/components/toaster-provider'
 import { ModalProvider } from '@/components/modal-provider'
 import { CrispProvider } from '@/components/crisp-provider'
-import ChatClientWrapper from './ChatClientWrapper';
 
 import './globals.css'
 
@@ -16,23 +15,30 @@ export const metadata: Metadata = {
   description: 'Interaktive Videos',
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
+  params
 }: {
-  children: React.ReactNode
+  children: React.ReactNode,
+  params: { id: string }
 }) {
+  // Überprüfe die Route serverseitig
+  const isViewRoute = params?.id?.endsWith('/view');
+
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <CrispProvider />
         <body className={font.className}>
-          <ToasterProvider />
-          <ModalProvider />
+          {!isViewRoute && (
+            <>
+              <CrispProvider />
+              <ToasterProvider />
+              <ModalProvider />
+            </>
+          )}
           {children}
         </body>
       </html>
     </ClerkProvider>
   )
 }
-
-

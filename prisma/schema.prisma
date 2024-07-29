@@ -34,13 +34,15 @@ model UserSubscription {
 }
 
 model InteractiveVideo {
-  id        String    @id @default(cuid())
-  title     String
-  videoId   String
-  buttons   Button[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id             String    @id @default(cuid())
+  title          String
+  videoId        String
+  shareUrl       String? // Neue Spalte zur Speicherung der statischen URL
+  buttons        Button[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
+
 
 model Button {
   id             String   @id @default(cuid())

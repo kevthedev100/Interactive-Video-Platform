@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { Plus, MonitorPlay } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { MonitorPlay, Plus } from "lucide-react";
 import { Heading } from "@/components/heading";
+import { useProModal } from "@/hooks/use-pro-modal";
 import * as lucideIcons from "lucide-react";
 
-const EditInteractiveVideo = () => {
-  const { id } = useParams();
+const InteractiveVideos = () => {
+  const proModal = useProModal();
   const [videos, setVideos] = useState([]);
-  const [interactiveVideoId, setInteractiveVideoId] = useState(id);
+  const [interactiveVideoId, setInteractiveVideoId] = useState<string | null>(null);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [buttons, setButtons] = useState([]);
   const [videoTitle, setVideoTitle] = useState('');
@@ -17,6 +17,8 @@ const EditInteractiveVideo = () => {
   const [isInteractiveVideoCreated, setIsInteractiveVideoCreated] = useState(false);
   const [isButtonTypeSelectionVisible, setIsButtonTypeSelectionVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [savedMessage, setSavedMessage] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -32,34 +34,51 @@ const EditInteractiveVideo = () => {
       }
     };
 
-    const fetchInteractiveVideo = async () => {
-      try {
-        const response = await fetch(`/api/interactive-videos/${id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch interactive video");
-        }
-        const data = await response.json();
-        setVideoTitle(data.title);
-        setSelectedVideo(data.videoId);
-        setPlayingVideo(data.videoId);
-        setButtons(data.buttons || []);
-        setIsInteractiveVideoCreated(true);
-      } catch (error) {
-        console.error("Error fetching interactive video:", error);
-      }
-    };
-
     fetchVideos();
-    fetchInteractiveVideo();
-  }, [id]);
+  }, []);
 
   const handlePlayVideo = (videoId: string) => {
-    setPlayingVideo(videoId);
+    if (iframeRef.current) {
+      iframeRef.current.src = `https://iframe.mediadelivery.net/embed/275360/${videoId}?autoplay=true`;
+      setPlayingVideo(videoId);
+    }
+  };
+
+  const createInteractiveVideo = async () => {
+    if (!videoTitle || !selectedVideo) {
+      alert("Bitte alle Felder ausfüllen.");
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/interactive-videos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: videoTitle,
+          videoId: selectedVideo,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create interactive video');
+      }
+
+      const data = await response.json();
+      setInteractiveVideoId(data.id);
+      setPlayingVideo(selectedVideo);
+      setIsInteractiveVideoCreated(true);
+      console.log('Interaktives Video erstellt:', data);
+    } catch (error) {
+      console.error('Error creating interactive video:', error);
+    }
   };
 
   const addNewButton = (type: 'video' | 'link') => {
     setButtons([...buttons, {
-      id: Date.now().toString(),
+      id: '',
       label: 'Neuer Button',
       link: '',
       url: '',
@@ -82,19 +101,20 @@ const EditInteractiveVideo = () => {
   };
 
   const handleInputChange = (index, property, value) => {
-    updateButton(index, { [property]: value });
+    // Convert numerical properties to numbers
+    const numericalProperties = ['width', 'height', 'top', 'left'];
+    const updatedValue = numericalProperties.includes(property) ? parseFloat(value) : value;
+    updateButton(index, { [property]: updatedValue });
   };
 
   const handleButtonClick = (index) => {
     const button = buttons[index];
-    if (!button.label || (button.type === 'video' && !button.link) || (button.type === 'link' && !button.url)) {
+    if (!button.label || (button.type === 'video' && !button.link)) {
       setErrorMessage("Du musst alle Felder ausfüllen.");
       return;
     }
 
-    if (button.url) {
-      window.open(button.url, '_blank');
-    } else {
+    if (button.link) {
       handlePlayVideo(button.link);
     }
     updateButton(index, { isVisible: false });
@@ -108,13 +128,15 @@ const EditInteractiveVideo = () => {
       return;
     }
 
+    const { url, ...buttonToSave } = button; // Exclude the 'url' field
+
     try {
-      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
+      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}/buttons`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(button),
+        body: JSON.stringify(buttonToSave),
       });
 
       if (!response.ok) {
@@ -123,6 +145,12 @@ const EditInteractiveVideo = () => {
 
       const data = await response.json();
       console.log('Button gespeichert:', data);
+      updateButton(index, { id: data.id }); // Update button with returned ID
+      setSavedMessage(true);
+
+      setTimeout(() => {
+        setSavedMessage(false);
+      }, 3000); // Blendet die Erfolgsnachricht nach 3 Sekunden aus
     } catch (error) {
       console.error('Error saving button:', error);
     }
@@ -134,13 +162,15 @@ const EditInteractiveVideo = () => {
       return;
     }
 
+    const buttonsToSave = buttons.map(({ url, ...rest }) => rest); // Exclude the 'url' field from all buttons
+
     try {
-      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
+      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}/buttons`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(buttons),
+        body: JSON.stringify(buttonsToSave),
       });
 
       if (!response.ok) {
@@ -149,6 +179,12 @@ const EditInteractiveVideo = () => {
 
       const data = await response.json();
       console.log('Buttons gespeichert:', data);
+      setButtons(data); // Update buttons with returned data
+      setSavedMessage(true);
+
+      setTimeout(() => {
+        setSavedMessage(false);
+      }, 3000); // Blendet die Erfolgsnachricht nach 3 Sekunden aus
     } catch (error) {
       console.error('Error saving buttons:', error);
     }
@@ -162,14 +198,14 @@ const EditInteractiveVideo = () => {
   return (
     <div className="p-4">
       <Heading
-        title="Bearbeite dein interaktives Video"
-        description="Hier kannst du dein interaktives Video bearbeiten"
+        title="Neues Video erstellen"
+        description="Hier kannst du ein neues interaktives Videos erstellen"
         icon={Plus}
         iconColor="text-gray-700"
         bgColor="bg-gray-700/10"
       />
 
-      {isInteractiveVideoCreated && (
+      {!isInteractiveVideoCreated && (
         <>
           <input
             type="text"
@@ -192,39 +228,48 @@ const EditInteractiveVideo = () => {
             ))}
           </select>
 
-          <div className="relative mb-4">
-            <div style={{ position: 'relative', paddingTop: '56.25%' }}>
-              <iframe
-                src={`https://iframe.mediadelivery.net/embed/275360/${playingVideo}?autoplay=true`}
-                loading="lazy"
-                style={{ border: 'none', position: 'absolute', top: 0, height: '100%', width: '100%' }}
-                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-              {buttons.map((button, index) => (
-                button.isVisible !== false && (
-                  <div 
-                    key={index} 
-                    className="absolute flex items-center justify-center rounded-md"
-                    style={{
-                      width: `${button.width}%`,
-                      height: `${button.height}%`,
-                      top: `${button.top}%`,
-                      left: `${button.left}%`,
-                      backgroundColor: button.backgroundColor,
-                      color: button.textColor,
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => handleButtonClick(index)}
-                  >
-                    {button.icon && renderIcon(button.icon)}
-                    {button.label}
-                  </div>
-                )
-              ))}
-            </div>
-          </div>
+          <button onClick={createInteractiveVideo} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+            Interaktives Video erstellen
+          </button>
         </>
+      )}
+
+      {playingVideo && (
+        <div className="relative mb-4">
+          <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+            <iframe
+              ref={iframeRef}
+              src={`https://iframe.mediadelivery.net/embed/275360/${playingVideo}?autoplay=true`}
+              loading="lazy"
+              style={{ border: 'none', position: 'absolute', top: 0, height: '100%', width: '100%' }}
+              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+            {buttons.map((button, index) => (
+              button.isVisible !== false && (
+                <div 
+                  key={index} 
+                  className="absolute flex items-center justify-center rounded-md"
+                  style={{
+                    backgroundColor: button.backgroundColor,
+                    color: button.textColor,
+                    width: `${button.width}%`,
+                    height: `${button.height}%`,
+                    top: `${button.top}%`,
+                    left: `${button.left}%`,
+                  }}
+                >
+                  {button.icon && renderIcon(button.icon)}
+                  <span>{button.label}</span>
+                </div>
+              )
+            ))}
+          </div>
+        </div>
+      )}
+
+      {videos.length === 0 && (
+        <p className="text-center text-gray-500 mt-4">Keine Videos verfügbar.</p>
       )}
 
       {interactiveVideoId && !isButtonTypeSelectionVisible && (
@@ -368,6 +413,9 @@ const EditInteractiveVideo = () => {
               >
                 Diesen Button speichern
               </button>
+              {savedMessage && (
+                <p className="text-green-500 text-center mt-2">Button gespeichert</p>
+              )}
             </div>
           </div>
         </div>
@@ -388,4 +436,4 @@ const EditInteractiveVideo = () => {
   );
 };
 
-export default EditInteractiveVideo;
+export default InteractiveVideos;

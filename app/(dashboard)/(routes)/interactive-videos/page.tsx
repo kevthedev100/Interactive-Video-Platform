@@ -78,6 +78,7 @@ const InteractiveVideos = () => {
 
   const addNewButton = (type: 'video' | 'link') => {
     setButtons([...buttons, {
+      id: '',
       label: 'Neuer Button',
       link: '',
       url: '',
@@ -100,19 +101,20 @@ const InteractiveVideos = () => {
   };
 
   const handleInputChange = (index, property, value) => {
-    updateButton(index, { [property]: value });
+    // Convert numerical properties to numbers
+    const numericalProperties = ['width', 'height', 'top', 'left'];
+    const updatedValue = numericalProperties.includes(property) ? parseFloat(value) : value;
+    updateButton(index, { [property]: updatedValue });
   };
 
   const handleButtonClick = (index) => {
     const button = buttons[index];
-    if (!button.label || (button.type === 'video' && !button.link) || (button.type === 'link' && !button.url)) {
+    if (!button.label || (button.type === 'video' && !button.link)) {
       setErrorMessage("Du musst alle Felder ausfüllen.");
       return;
     }
 
-    if (button.url) {
-      window.open(button.url, '_blank');
-    } else {
+    if (button.link) {
       handlePlayVideo(button.link);
     }
     updateButton(index, { isVisible: false });
@@ -126,13 +128,15 @@ const InteractiveVideos = () => {
       return;
     }
 
+    const { url, ...buttonToSave } = button; // Exclude the 'url' field
+
     try {
       const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(button),
+        body: JSON.stringify(buttonToSave),
       });
 
       if (!response.ok) {
@@ -141,6 +145,7 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Button gespeichert:', data);
+      updateButton(index, { id: data.id }); // Update button with returned ID
       setSavedMessage(true);
 
       setTimeout(() => {
@@ -157,13 +162,15 @@ const InteractiveVideos = () => {
       return;
     }
 
+    const buttonsToSave = buttons.map(({ url, ...rest }) => rest); // Exclude the 'url' field from all buttons
+
     try {
       const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(buttons),
+        body: JSON.stringify(buttonsToSave),
       });
 
       if (!response.ok) {
@@ -172,6 +179,7 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Buttons gespeichert:', data);
+      setButtons(data); // Update buttons with returned data
       setSavedMessage(true);
 
       setTimeout(() => {
@@ -243,18 +251,16 @@ const InteractiveVideos = () => {
                   key={index} 
                   className="absolute flex items-center justify-center rounded-md"
                   style={{
+                    backgroundColor: button.backgroundColor,
+                    color: button.textColor,
                     width: `${button.width}%`,
                     height: `${button.height}%`,
                     top: `${button.top}%`,
                     left: `${button.left}%`,
-                    backgroundColor: button.backgroundColor,
-                    color: button.textColor,
-                    cursor: 'pointer',
                   }}
-                  onClick={() => handleButtonClick(index)}
                 >
                   {button.icon && renderIcon(button.icon)}
-                  {button.label}
+                  <span>{button.label}</span>
                 </div>
               )
             ))}
@@ -306,7 +312,6 @@ const InteractiveVideos = () => {
                     value={button.link} 
                     onChange={(e) => handleInputChange(index, 'link', e.target.value)} 
                     className="ml-2 px-2 py-1 border rounded-md w-full"
-                    disabled={button.url !== ''}
                   >
                     <option value="">Wähle ein Video</option>
                     {videos.map(video => (
@@ -365,7 +370,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.width} 
-                  onChange={(e) => handleInputChange(index, 'width', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'width', parseFloat(e.target.value))} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -375,7 +380,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.height} 
-                  onChange={(e) => handleInputChange(index, 'height', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'height', parseFloat(e.target.value))} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -385,7 +390,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.top} 
-                  onChange={(e) => handleInputChange(index, 'top', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'top', parseFloat(e.target.value))} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>
@@ -395,7 +400,7 @@ const InteractiveVideos = () => {
                 <input 
                   type="number" 
                   value={button.left} 
-                  onChange={(e) => handleInputChange(index, 'left', e.target.value)} 
+                  onChange={(e) => handleInputChange(index, 'left', parseFloat(e.target.value))} 
                   className="ml-2 px-2 py-1 border rounded-md w-full"
                 />
               </label>

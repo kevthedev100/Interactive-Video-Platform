@@ -1,6 +1,26 @@
 import { NextResponse } from 'next/server';
 import prismadb from '@/lib/prismadb';
 
+export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+  const { id } = params;
+
+  try {
+    const interactiveVideo = await prismadb.interactiveVideo.findUnique({
+      where: { id },
+      include: { buttons: true },
+    });
+
+    if (!interactiveVideo) {
+      return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(interactiveVideo, { status: 200 });
+  } catch (error) {
+    console.error('Error fetching interactive video:', error);
+    return NextResponse.json({ error: 'Error fetching interactive video' }, { status: 500 });
+  }
+};
+
 export const POST = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
   const button = await req.json();
@@ -36,22 +56,20 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
   }
 };
 
-export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+// New PATCH route for updating the shareUrl
+export const PATCH = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
+  const { shareUrl } = await req.json();
 
   try {
-    const interactiveVideo = await prismadb.interactiveVideo.findUnique({
+    const updatedVideo = await prismadb.interactiveVideo.update({
       where: { id },
-      include: { buttons: true },
+      data: { shareUrl },
     });
 
-    if (!interactiveVideo) {
-      return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
-    }
-
-    return NextResponse.json(interactiveVideo, { status: 200 });
+    return NextResponse.json(updatedVideo, { status: 200 });
   } catch (error) {
-    console.error('Error fetching interactive video:', error);
-    return NextResponse.json({ error: 'Error fetching interactive video' }, { status: 500 });
+    console.error('Error updating share URL:', error);
+    return NextResponse.json({ error: 'Error updating share URL' }, { status: 500 });
   }
 };

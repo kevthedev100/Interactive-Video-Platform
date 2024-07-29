@@ -10,6 +10,8 @@ const nextConfig = {
 }
 module.exports = {
   ignoreBuildErrors: true,
+  reactStrictMode: true,
+  swcMinify: true,
 };
 
 

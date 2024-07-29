@@ -4,7 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 
 import { ToasterProvider } from '@/components/toaster-provider'
 import { ModalProvider } from '@/components/modal-provider'
-import { CrispProvider } from '@/components/crisp-provider'
+
 
 import './globals.css'
 
@@ -31,7 +31,7 @@ export default function RootLayout({
         <body className={font.className}>
           {!isViewRoute && (
             <>
-              <CrispProvider />
+            
               <ToasterProvider />
               <ModalProvider />
             </>

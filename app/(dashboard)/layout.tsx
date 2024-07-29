@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/sidebar";
 import { checkSubscription } from "@/lib/subscription";
 import { getApiLimitCount } from "@/lib/api-limit";
 import { CrispProvider } from '@/components/crisp-provider';
+/*     <CrispProvider />*/
 
 const DashboardLayout = async ({
   children,
@@ -21,7 +22,7 @@ const DashboardLayout = async ({
         <Navbar />
         {children}
       </main>
-      <CrispProvider />
+
     </div>
   );
 }

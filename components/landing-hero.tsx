@@ -43,21 +43,38 @@ export const LandingHero = () => {
         </Link>
       </div>
       <div className="mb-32 text-zinc-400 text-xs md:text-sm font-normal">
-    <h5 className="mb-20">Das effektivste Videomarketing in 2024</h5>
+        <h5 className="mb-20">Das effektivste Videomarketing in 2024</h5>
       </div>
+      
+      {/* Neues interaktives Video */}
       <div className="mt-64 relative overflow-hidden" style={{ paddingTop: '56.25%' }}>
-          <iframe 
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
-              src="https://embed.mindstamp.com/e/zFqSPFfzFpyw" 
-              allowFullScreen 
-              allow="encrypted-media; microphone; camera; geolocation" 
-              loading="lazy" 
-              scrolling="no">
-          </iframe>
+        <iframe 
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
+          src="http://localhost:3000/public-interactive/clzajff0f0005udicy9i4jclm/view" 
+          allowFullScreen 
+          allow="encrypted-media; microphone; camera; geolocation" 
+          loading="lazy" 
+          scrolling="no">
+        </iframe>
+      </div>
+
+      {/* Abstand zwischen den iframes */}
+      <div style={{ height: '50px' }}></div>
+
+      {/* Bestehendes Video */}
+      <div className="relative overflow-hidden" style={{ paddingTop: '56.25%' }}>
+        <iframe 
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
+          src="https://embed.mindstamp.com/e/zFqSPFfzFpyw" 
+          allowFullScreen 
+          allow="encrypted-media; microphone; camera; geolocation" 
+          loading="lazy" 
+          scrolling="no">
+        </iframe>
       </div>
 
       <div className="text-sm md:text-xl font-light text-zinc-400 text-center">
-        In diesem Video kannst du dir durch interaktionen einen einzigartigen Eindruck machen...
+        In diesem Video kannst du dir durch Interaktionen einen einzigartigen Eindruck machen...
       </div>
     </div>
   );

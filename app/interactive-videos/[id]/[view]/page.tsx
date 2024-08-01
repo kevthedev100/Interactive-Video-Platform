@@ -28,7 +28,6 @@ const ViewInteractiveVideo = () => {
 
   useEffect(() => {
     setHydrated(true);
-
     const fetchInteractiveVideo = async () => {
       try {
         const response = await fetch(`/api/interactive-videos/${id}`);

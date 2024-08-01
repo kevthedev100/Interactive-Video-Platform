@@ -9,8 +9,8 @@ import * as lucideIcons from "lucide-react";
 const InteractiveVideos = () => {
   const proModal = useProModal();
   const [videos, setVideos] = useState([]);
-  const [interactiveVideoId, setInteractiveVideoId] = useState<string | null>(null);
-  const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+  const [interactiveVideoId, setInteractiveVideoId] = useState(null);
+  const [playingVideo, setPlayingVideo] = useState(null);
   const [buttons, setButtons] = useState([]);
   const [videoTitle, setVideoTitle] = useState('');
   const [selectedVideo, setSelectedVideo] = useState('');
@@ -18,7 +18,7 @@ const InteractiveVideos = () => {
   const [isButtonTypeSelectionVisible, setIsButtonTypeSelectionVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [savedMessage, setSavedMessage] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const iframeRef = useRef(null);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -28,7 +28,7 @@ const InteractiveVideos = () => {
           throw new Error("Failed to fetch videos");
         }
         const data = await response.json();
-        setVideos(data.items); // Lade alle Videos für die Dropdowns
+        setVideos(data.items);
       } catch (error) {
         console.error("Error fetching videos:", error);
       }
@@ -37,7 +37,7 @@ const InteractiveVideos = () => {
     fetchVideos();
   }, []);
 
-  const handlePlayVideo = (videoId: string) => {
+  const handlePlayVideo = (videoId) => {
     if (iframeRef.current) {
       iframeRef.current.src = `https://iframe.mediadelivery.net/embed/275360/${videoId}?autoplay=true`;
       setPlayingVideo(videoId);
@@ -76,22 +76,23 @@ const InteractiveVideos = () => {
     }
   };
 
-  const addNewButton = (type: 'video' | 'link') => {
+  const addNewButton = (type) => {
     setButtons([...buttons, {
       id: '',
       label: 'Neuer Button',
-      link: '',
-      url: '',
+      link: type === 'video' ? '' : null,
+      url: type === 'link' ? '' : null,
       type,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Standard-Hintergrundfarbe halb-transparent Schwarz
-      textColor: '#ffffff', // Standard-Textfarbe Weiß
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      textColor: '#ffffff',
       icon: '',
-      width: 45, // Standard-Breite
-      height: 8, // Standard-Höhe
-      top: 84, // Standard-Position von oben
-      left: 2, // Standard-Position von links
+      width: 45,
+      height: 8,
+      top: 84,
+      left: 2,
+      isVisible: true,
     }]);
-    setIsButtonTypeSelectionVisible(false); // Ausblendung der Auswahl nach der Erstellung
+    setIsButtonTypeSelectionVisible(false);
   };
 
   const updateButton = (index, newProperties) => {
@@ -101,20 +102,22 @@ const InteractiveVideos = () => {
   };
 
   const handleInputChange = (index, property, value) => {
-    // Convert numerical properties to numbers
     const numericalProperties = ['width', 'height', 'top', 'left'];
     const updatedValue = numericalProperties.includes(property) ? parseFloat(value) : value;
     updateButton(index, { [property]: updatedValue });
+    console.log(`Updated ${property} for button ${index}:`, value);
   };
 
   const handleButtonClick = (index) => {
     const button = buttons[index];
-    if (!button.label || (button.type === 'video' && !button.link)) {
+    if (!button.label || (button.type === 'video' && !button.link) || (button.type === 'link' && !button.url)) {
       setErrorMessage("Du musst alle Felder ausfüllen.");
       return;
     }
 
-    if (button.link) {
+    if (button.type === 'link' && button.url) {
+      window.open(button.url, '_blank');
+    } else if (button.type === 'video' && button.link) {
       handlePlayVideo(button.link);
     }
     updateButton(index, { isVisible: false });
@@ -128,7 +131,12 @@ const InteractiveVideos = () => {
       return;
     }
 
-    const { url, ...buttonToSave } = button; // Exclude the 'url' field
+    const buttonToSave = {
+      ...button,
+      videoId: interactiveVideoId
+    };
+
+    console.log('Button to save:', buttonToSave);
 
     try {
       const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
@@ -145,12 +153,12 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Button gespeichert:', data);
-      updateButton(index, { id: data.id }); // Update button with returned ID
+      updateButton(index, { id: data.id });
       setSavedMessage(true);
 
       setTimeout(() => {
         setSavedMessage(false);
-      }, 3000); // Blendet die Erfolgsnachricht nach 3 Sekunden aus
+      }, 3000);
     } catch (error) {
       console.error('Error saving button:', error);
     }
@@ -162,15 +170,20 @@ const InteractiveVideos = () => {
       return;
     }
 
-    const buttonsToSave = buttons.map(({ url, ...rest }) => rest); // Exclude the 'url' field from all buttons
+    const buttonsToSave = buttons.map(button => ({
+      ...button,
+      videoId: interactiveVideoId
+    }));
+
+    console.log('Buttons to save:', buttonsToSave);
 
     try {
       const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(buttonsToSave),
+        body: JSON.stringify({ buttons: buttonsToSave }),
       });
 
       if (!response.ok) {
@@ -179,12 +192,12 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Buttons gespeichert:', data);
-      setButtons(data); // Update buttons with returned data
+      setButtons(data.buttons || data);
       setSavedMessage(true);
 
       setTimeout(() => {
         setSavedMessage(false);
-      }, 3000); // Blendet die Erfolgsnachricht nach 3 Sekunden aus
+      }, 3000);
     } catch (error) {
       console.error('Error saving buttons:', error);
     }
@@ -195,11 +208,36 @@ const InteractiveVideos = () => {
     return IconComponent ? <IconComponent className="mr-2" /> : null;
   };
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const iframe = iframeRef.current;
+      if (iframe) {
+        const isFullscreen = document.fullscreenElement === iframe || document.webkitFullscreenElement === iframe || document.mozFullScreenElement === iframe || document.msFullscreenElement === iframe;
+        iframe.style.position = isFullscreen ? 'fixed' : 'absolute';
+        iframe.style.top = isFullscreen ? '0' : '0';
+        iframe.style.width = isFullscreen ? '100%' : '100%';
+        iframe.style.height = isFullscreen ? '100%' : '100%';
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, []);
+
   return (
     <div className="p-4">
       <Heading
         title="Neues Video erstellen"
-        description="Hier kannst du ein neues interaktives Videos erstellen"
+        description="Hier kannst du ein neues interaktives Video erstellen"
         icon={Plus}
         iconColor="text-gray-700"
         bgColor="bg-gray-700/10"
@@ -227,7 +265,6 @@ const InteractiveVideos = () => {
               </option>
             ))}
           </select>
-
           <button onClick={createInteractiveVideo} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
             Interaktives Video erstellen
           </button>
@@ -246,10 +283,10 @@ const InteractiveVideos = () => {
               allowFullScreen
             ></iframe>
             {buttons.map((button, index) => (
-              button.isVisible !== false && (
+              button.isVisible && (
                 <div 
                   key={index} 
-                  className="absolute flex items-center justify-center rounded-md"
+                  className="absolute flex items-center justify-center rounded-md cursor-pointer"
                   style={{
                     backgroundColor: button.backgroundColor,
                     color: button.textColor,
@@ -258,6 +295,7 @@ const InteractiveVideos = () => {
                     top: `${button.top}%`,
                     left: `${button.left}%`,
                   }}
+                  onClick={() => handleButtonClick(index)}
                 >
                   {button.icon && renderIcon(button.icon)}
                   <span>{button.label}</span>
@@ -296,22 +334,22 @@ const InteractiveVideos = () => {
           </h2>
           <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="font-bold">Beschriftung:
+              <label className="font-bold block">Beschriftung:
                 <input 
                   type="text" 
                   value={button.label} 
                   onChange={(e) => handleInputChange(index, 'label', e.target.value)} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             {button.type === 'video' && (
               <div>
-                <label className="font-bold">Video:
+                <label className="font-bold block">Video:
                   <select 
                     value={button.link} 
                     onChange={(e) => handleInputChange(index, 'link', e.target.value)} 
-                    className="ml-2 px-2 py-1 border rounded-md w-full"
+                    className="mt-1 px-2 py-1 border rounded-md w-full"
                   >
                     <option value="">Wähle ein Video</option>
                     {videos.map(video => (
@@ -325,83 +363,83 @@ const InteractiveVideos = () => {
             )}
             {button.type === 'link' && (
               <div>
-                <label className="font-bold">URL:
+                <label className="font-bold block">URL:
                   <input 
                     type="text" 
-                    value={button.url} 
+                    value={button.url || ''} 
                     onChange={(e) => handleInputChange(index, 'url', e.target.value)} 
-                    className="ml-2 px-2 py-1 border rounded-md w-full"
+                    className="mt-1 px-2 py-1 border rounded-md w-full"
                   />
                 </label>
               </div>
             )}
             <div>
-              <label className="font-bold">Hintergrundfarbe (Hex):
+              <label className="font-bold block">Hintergrundfarbe (Hex):
                 <input 
                   type="text" 
                   value={button.backgroundColor} 
                   onChange={(e) => handleInputChange(index, 'backgroundColor', e.target.value)} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             <div>
-              <label className="font-bold">Textfarbe (Hex):
+              <label className="font-bold block">Textfarbe (Hex):
                 <input 
                   type="text" 
                   value={button.textColor} 
                   onChange={(e) => handleInputChange(index, 'textColor', e.target.value)} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             <div>
-              <label className="font-bold">Icon:
+              <label className="font-bold block">Icon:
                 <input 
                   type="text" 
                   value={button.icon} 
                   onChange={(e) => handleInputChange(index, 'icon', e.target.value)} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             <div>
-              <label className="font-bold">Breite (%):
+              <label className="font-bold block">Breite (%):
                 <input 
                   type="number" 
                   value={button.width} 
                   onChange={(e) => handleInputChange(index, 'width', parseFloat(e.target.value))} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             <div>
-              <label className="font-bold">Höhe (%):
+              <label className="font-bold block">Höhe (%):
                 <input 
                   type="number" 
                   value={button.height} 
                   onChange={(e) => handleInputChange(index, 'height', parseFloat(e.target.value))} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             <div>
-              <label className="font-bold">Oben (%):
+              <label className="font-bold block">Oben (%):
                 <input 
                   type="number" 
                   value={button.top} 
                   onChange={(e) => handleInputChange(index, 'top', parseFloat(e.target.value))} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
             <div>
-              <label className="font-bold">Links (%):
+              <label className="font-bold block">Links (%):
                 <input 
                   type="number" 
                   value={button.left} 
                   onChange={(e) => handleInputChange(index, 'left', parseFloat(e.target.value))} 
-                  className="ml-2 px-2 py-1 border rounded-md w-full"
+                  className="mt-1 px-2 py-1 border rounded-md w-full"
                 />
               </label>
             </div>
@@ -412,9 +450,6 @@ const InteractiveVideos = () => {
               >
                 Diesen Button speichern
               </button>
-              {savedMessage && (
-                <p className="text-green-500 text-center mt-2">Button gespeichert</p>
-              )}
             </div>
           </div>
         </div>

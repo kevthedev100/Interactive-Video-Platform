@@ -31,7 +31,7 @@ const InteractiveLibrary = () => {
   };
 
   const handleShare = (videoId) => {
-    router.push(`/interactive-videos/${videoId}/view`);
+    router.push(`/public-interactive/${videoId}/view`);
   };
 
   return (

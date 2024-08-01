@@ -37,7 +37,8 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
     const createdButton = await prismadb.button.create({
       data: {
         label: button.label,
-        link: button.link,
+        link: button.type === 'video' ? button.link : null,
+        url: button.type === 'link' ? button.url : null, // Ensure 'url' is handled correctly
         width: button.width,
         height: button.height,
         top: button.top,

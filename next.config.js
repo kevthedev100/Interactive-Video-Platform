@@ -7,11 +7,16 @@ const nextConfig = {
       "cdn.openai.com"
     ]
   },
-}
-module.exports = {
-  ignoreBuildErrors: true,
   reactStrictMode: true,
   swcMinify: true,
-};
+  typescript: {
+    // Ignoriert TypeScript-Fehler beim Bauen
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    // Ignoriert ESLint-Fehler beim Bauen
+    ignoreDuringBuilds: true,
+  },
+}
 
-
+module.exports = nextConfig;

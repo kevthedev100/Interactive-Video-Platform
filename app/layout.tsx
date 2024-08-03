@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
-
 import { ToasterProvider } from '@/components/toaster-provider'
 import { ModalProvider } from '@/components/modal-provider'
-
 
 import './globals.css'
 
@@ -22,23 +20,28 @@ export default function RootLayout({
   children: React.ReactNode,
   params: { id: string }
 }) {
-  // Überprüfe die Route serverseitig
-  const isViewRoute = params?.id?.endsWith('/view');
+  // Überprüfen, ob die Route eine öffentliche Ansicht ist
+  const isViewRoute = params?.id?.startsWith('public-interactive');
 
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={font.className}>
-          {!isViewRoute && (
-            <>
-            
+    <>
+      {isViewRoute ? (
+        <html lang="en">
+          <body className={font.className}>
+            {children}
+          </body>
+        </html>
+      ) : (
+        <ClerkProvider>
+          <html lang="en" suppressHydrationWarning>
+            <body className={font.className}>
               <ToasterProvider />
               <ModalProvider />
-            </>
-          )}
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+              {children}
+            </body>
+          </html>
+        </ClerkProvider>
+      )}
+    </>
   )
 }

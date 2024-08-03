@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prismadb from '@/lib/prismadb';
 
+// Erstelle ein interaktives Video (möglicherweise mit Authentifizierung)
 export const POST = async (req: Request) => {
   const { title, videoId } = await req.json();
 
@@ -19,11 +20,12 @@ export const POST = async (req: Request) => {
   }
 };
 
+// Alle interaktiven Videos abrufen (ohne Authentifizierung)
 export const GET = async () => {
   try {
     const interactiveVideos = await prismadb.interactiveVideo.findMany({
       include: {
-        buttons: true,
+        buttons: true, // Buttons einbinden
       },
     });
 

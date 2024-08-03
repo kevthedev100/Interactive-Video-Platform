@@ -1,7 +1,9 @@
+// middleware.ts
 import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
-  publicRoutes: ["/", "/api/webhook"],
+  // Füge hier die public-interactive-Route hinzu, damit sie ohne Authentifizierung zugänglich ist
+  publicRoutes: ["/", "/api/webhook", "/public-interactive/:id/view", "/api/interactive-videos/:id"],
 });
 
 export const config = {

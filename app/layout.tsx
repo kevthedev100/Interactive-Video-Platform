@@ -4,7 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 
 import { ToasterProvider } from '@/components/toaster-provider'
 import { ModalProvider } from '@/components/modal-provider'
-import ErrorBoundary from '../components/ErrorBoundary'  // Importieren Sie ErrorBoundary
+
 
 import './globals.css'
 
@@ -17,18 +17,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  params
 }: {
   children: React.ReactNode,
+  params: { id: string }
 }) {
+  // Überprüfe die Route serverseitig
+  const isViewRoute = params?.id?.endsWith('/view');
+
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={font.className}>
-          <ErrorBoundary>
-            <ToasterProvider />
-            <ModalProvider />
-            {children}
-          </ErrorBoundary>
+          {!isViewRoute && (
+            <>
+            
+              <ToasterProvider />
+              <ModalProvider />
+            </>
+          )}
+          {children}
         </body>
       </html>
     </ClerkProvider>

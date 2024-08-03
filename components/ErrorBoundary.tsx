@@ -1,3 +1,5 @@
+"use client";  // Fügen Sie dies hinzu
+
 import React, { Component, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {

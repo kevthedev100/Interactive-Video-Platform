@@ -10,6 +10,7 @@ export const LandingHero = () => {
   const { isSignedIn } = useAuth();
 
   return (
+    
     <div className="text-white font-bold pt-12 pl-5 pr-5 text-center space-y-5">
       <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
         <h1>Videyou - Interaktive Videos</h1>
@@ -45,7 +46,6 @@ export const LandingHero = () => {
       <div className="mb-32 text-zinc-400 text-xs md:text-sm font-normal">
         <h5 className="mb-20">Das effektivste Videomarketing in 2024</h5>
       </div>
-      
       
 
       {/* Neues interaktives Video - Live Version */}

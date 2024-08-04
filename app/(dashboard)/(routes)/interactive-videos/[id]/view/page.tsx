@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import * as lucideIcons from "lucide-react";
 
+
 declare global {
   interface Document {
     mozFullScreenElement?: Element;
@@ -98,7 +99,12 @@ const ViewInteractiveVideo = () => {
   };
 
   if (loading) {
-    return <div className="text-white">Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-black">
+        <img src="/Videyou-Logo.png" alt="Videyou Logo" className="w-1/2 max-w-xs" />
+        <p className="text-white mt-6">Interaktive Videos von Videyou</p>
+      </div>
+    );
   }
 
   return (

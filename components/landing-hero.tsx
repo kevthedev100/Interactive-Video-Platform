@@ -46,18 +46,6 @@ export const LandingHero = () => {
       <div className="mb-32 text-zinc-400 text-xs md:text-sm font-normal">
         <h5 className="mb-20">Das effektivste Videomarketing in 2024</h5>
       </div>
-           {/* Neues interaktives Video */}
-           <div className="mt-64 relative overflow-hidden" style={{ paddingTop: '56.25%' }}>
-        <iframe 
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }} 
-          src="http://localhost:3000/public-interactive/clzajff0f0005udicy9i4jclm/view" 
-          allowFullScreen 
-          allow="encrypted-media; microphone; camera; geolocation" 
-          loading="lazy" 
-          scrolling="no">
-        </iframe>
-      </div>
-
 
       {/* Neues interaktives Video - Live Version */}
       <div className="mt-64 relative overflow-hidden" style={{ paddingTop: '56.25%' }}>

@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 import prismadb from '@/lib/prismadb';
 
-// API für ein einzelnes interaktives Video
+// Öffentliche GET-Route für interaktive Videos
 export const GET = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
 
   try {
     const interactiveVideo = await prismadb.interactiveVideo.findUnique({
       where: { id },
-      include: { buttons: true },
+      include: { buttons: true }, // Lade die Buttons für das Video
     });
 
     if (!interactiveVideo) {
@@ -22,6 +22,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   }
 };
 
+// POST-Route bleibt unverändert, wenn Authentifizierung erforderlich ist
 export const POST = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
   const button = await req.json();
@@ -58,6 +59,7 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
   }
 };
 
+// PATCH bleibt ebenfalls unverändert, wenn Authentifizierung erforderlich ist
 export const PATCH = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
   const { shareUrl } = await req.json();

@@ -23,24 +23,24 @@ const ViewInteractiveVideo = () => {
   const [videoId, setVideoId] = useState("");
   const [buttons, setButtons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [hydrated, setHydrated] = useState(false);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setHydrated(true);
-
     const fetchInteractiveVideo = async () => {
       try {
-        const response = await fetch(`/api/interactive-videos/${id}`);
+        const response = await fetch(`/api/interactive-videos/${id}`); // Direkter Zugriff ohne Authentifizierung
+
         if (!response.ok) {
           throw new Error("Failed to fetch interactive video");
         }
+
         const data = await response.json();
         setVideoId(data.videoId);
         setButtons(data.buttons || []);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching interactive video:", error);
+        setLoading(false);
       }
     };
 
@@ -73,12 +73,12 @@ const ViewInteractiveVideo = () => {
     };
   }, [id]);
 
-  const renderIcon = (iconName) => {
+  const renderIcon = (iconName: string) => {
     const IconComponent = lucideIcons[iconName];
     return IconComponent ? <IconComponent className="mr-2" /> : null;
   };
 
-  const handleButtonClick = (index) => {
+  const handleButtonClick = (index: number) => {
     const button = buttons[index];
 
     if (button.url) {
@@ -95,14 +95,9 @@ const ViewInteractiveVideo = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-black">
-        <img
-          src="/Videyou-Logo.png"
-          alt="Videyou Logo"
-          className="w-1/2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
-        />
-        <p className="text-white mt-6 text-center">
-          Das interaktive Video wird geladen
-        </p>
+        <img src="/Videyou-Logo.png" alt="Videyou Logo" className="w-1/2 max-w-xs" />
+        <p className="text-white mt-6">Interaktive Videos von Videyou</p>
+        
       </div>
     );
   }

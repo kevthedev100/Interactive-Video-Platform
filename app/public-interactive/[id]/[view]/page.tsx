@@ -33,7 +33,8 @@ const ViewInteractiveVideo = () => {
       try {
         const response = await fetch(`/api/interactive-videos/${id}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch interactive video");
+          const errorData = await response.json();
+          throw new Error(`Failed to fetch interactive video: ${errorData.error}`);
         }
         const data = await response.json();
         setVideoId(data.videoId);
@@ -41,6 +42,7 @@ const ViewInteractiveVideo = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching interactive video:", error);
+        setLoading(false);
       }
     };
 

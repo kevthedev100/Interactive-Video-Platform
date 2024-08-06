@@ -1,24 +1,25 @@
 import { NextResponse } from 'next/server';
 import prismadb from '@/lib/prismadb';
 
-// API für ein einzelnes interaktives Video
 export const GET = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
 
   try {
-    // Interaktives Video abrufen
+    // Versuche, das interaktive Video anhand der ID abzurufen
     const interactiveVideo = await prismadb.interactiveVideo.findUnique({
       where: { id },
       include: { buttons: true },
     });
 
-    // Überprüfen, ob das Video existiert
     if (!interactiveVideo) {
+      // Wenn das Video nicht gefunden wird, gebe einen 404-Fehler zurück
       return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
     }
 
+    // Erfolgreich abgerufen, gebe das Video zurück
     return NextResponse.json(interactiveVideo, { status: 200 });
   } catch (error) {
+    // Detailliertes Logging des Fehlers
     console.error('Error fetching interactive video:', error);
     return NextResponse.json({ error: 'Error fetching interactive video' }, { status: 500 });
   }
@@ -29,7 +30,6 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
   const button = await req.json();
 
   try {
-    // Überprüfen, ob das interaktive Video existiert
     const interactiveVideo = await prismadb.interactiveVideo.findUnique({
       where: { id },
     });
@@ -38,7 +38,6 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
     }
 
-    // Button erstellen
     const createdButton = await prismadb.button.create({
       data: {
         label: button.label,
@@ -55,7 +54,7 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
       },
     });
 
-    return NextResponse.json(createdButton, { status: 200 });
+    return NextResponse.json(createdButton, { status: 201 });
   } catch (error) {
     console.error('Error saving button:', error);
     return NextResponse.json({ error: 'Error saving button' }, { status: 500 });
@@ -67,7 +66,6 @@ export const PATCH = async (req: Request, { params }: { params: { id: string } }
   const { shareUrl } = await req.json();
 
   try {
-    // Share URL aktualisieren
     const updatedVideo = await prismadb.interactiveVideo.update({
       where: { id },
       data: { shareUrl },

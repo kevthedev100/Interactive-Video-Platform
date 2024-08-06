@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
 import prismadb from '@/lib/prismadb';
 
-// Öffentliche GET-Route für interaktive Videos
+// API für ein einzelnes interaktives Video
 export const GET = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
 
   try {
+    // Interaktives Video abrufen
     const interactiveVideo = await prismadb.interactiveVideo.findUnique({
       where: { id },
-      include: { buttons: true }, // Lade die Buttons für das Video
+      include: { buttons: true },
     });
 
+    // Überprüfen, ob das Video existiert
     if (!interactiveVideo) {
       return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
     }
@@ -22,12 +24,12 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   }
 };
 
-// POST-Route bleibt unverändert, wenn Authentifizierung erforderlich ist
 export const POST = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
   const button = await req.json();
 
   try {
+    // Überprüfen, ob das interaktive Video existiert
     const interactiveVideo = await prismadb.interactiveVideo.findUnique({
       where: { id },
     });
@@ -36,6 +38,7 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
     }
 
+    // Button erstellen
     const createdButton = await prismadb.button.create({
       data: {
         label: button.label,
@@ -59,12 +62,12 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
   }
 };
 
-// PATCH bleibt ebenfalls unverändert, wenn Authentifizierung erforderlich ist
 export const PATCH = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
   const { shareUrl } = await req.json();
 
   try {
+    // Share URL aktualisieren
     const updatedVideo = await prismadb.interactiveVideo.update({
       where: { id },
       data: { shareUrl },

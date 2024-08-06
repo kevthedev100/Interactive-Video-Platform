@@ -1,10 +1,17 @@
-import { PrismaClient } from "@prisma/client"
+// lib/prismadb.ts
+import { PrismaClient } from '@prisma/client';
 
 declare global {
-  var prisma: PrismaClient | undefined
+  // Vermeidung von mehrfacher Deklaration von Prisma-Client im globalen Namespace
+  var prisma: PrismaClient | undefined;
 }
 
-const prismadb = globalThis.prisma || new PrismaClient()
-if (process.env.NODE_ENV !== "production") globalThis.prisma = prismadb
+// Initialisiere PrismaClient nur einmal während der Entwicklungszeit
+const prisma = global.prisma || new PrismaClient({
+  log: ['query', 'info', 'warn', 'error'],
+});
 
-export default prismadb;
+// Setze die Prisma-Client-Instanz in die globale Variable, um mehrfaches Erstellen zu verhindern
+if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
+
+export default prisma;

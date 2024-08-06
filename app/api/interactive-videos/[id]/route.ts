@@ -5,23 +5,23 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   const { id } = params;
 
   try {
-    // Versuche, das interaktive Video anhand der ID abzurufen
+    // Abrufen des interaktiven Videos anhand der ID
     const interactiveVideo = await prismadb.interactiveVideo.findUnique({
       where: { id },
       include: { buttons: true },
     });
 
     if (!interactiveVideo) {
-      // Wenn das Video nicht gefunden wird, gebe einen 404-Fehler zurück
+      // Fehlerbehandlung für den Fall, dass das Video nicht gefunden wird
       return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
     }
 
-    // Erfolgreich abgerufen, gebe das Video zurück
+    // Rückgabe des gefundenen Videos
     return NextResponse.json(interactiveVideo, { status: 200 });
-  } catch (error) {
-    // Detailliertes Logging des Fehlers
-    console.error('Error fetching interactive video:', error);
-    return NextResponse.json({ error: 'Error fetching interactive video' }, { status: 500 });
+  } catch (error: any) {
+    // Fehlerbehandlung mit detailliertem Fehlerbericht
+    console.error('Error fetching interactive video:', error.message);
+    return NextResponse.json({ error: 'Error fetching interactive video', details: error.message }, { status: 500 });
   }
 };
 
@@ -30,6 +30,7 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
   const button = await req.json();
 
   try {
+    // Prüfen, ob das interaktive Video existiert
     const interactiveVideo = await prismadb.interactiveVideo.findUnique({
       where: { id },
     });
@@ -38,6 +39,7 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: 'Interactive video not found' }, { status: 404 });
     }
 
+    // Erstellen eines neuen Buttons
     const createdButton = await prismadb.button.create({
       data: {
         label: button.label,
@@ -54,10 +56,12 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
       },
     });
 
+    // Erfolgreiche Erstellung eines Buttons
     return NextResponse.json(createdButton, { status: 201 });
-  } catch (error) {
-    console.error('Error saving button:', error);
-    return NextResponse.json({ error: 'Error saving button' }, { status: 500 });
+  } catch (error: any) {
+    // Fehlerbehandlung mit detaillierter Protokollierung
+    console.error('Error saving button:', error.message);
+    return NextResponse.json({ error: 'Error saving button', details: error.message }, { status: 500 });
   }
 };
 
@@ -66,14 +70,17 @@ export const PATCH = async (req: Request, { params }: { params: { id: string } }
   const { shareUrl } = await req.json();
 
   try {
+    // Aktualisieren der Share-URL des interaktiven Videos
     const updatedVideo = await prismadb.interactiveVideo.update({
       where: { id },
       data: { shareUrl },
     });
 
+    // Erfolgreiche Aktualisierung der Share-URL
     return NextResponse.json(updatedVideo, { status: 200 });
-  } catch (error) {
-    console.error('Error updating share URL:', error);
-    return NextResponse.json({ error: 'Error updating share URL' }, { status: 500 });
+  } catch (error: any) {
+    // Fehlerbehandlung mit detailliertem Fehlerbericht
+    console.error('Error updating share URL:', error.message);
+    return NextResponse.json({ error: 'Error updating share URL', details: error.message }, { status: 500 });
   }
 };

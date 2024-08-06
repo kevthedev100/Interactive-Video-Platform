@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MonitorPlay, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Heading } from "@/components/heading";
-import { useProModal } from "@/hooks/use-pro-modal";
 import * as lucideIcons from "lucide-react";
 
 const InteractiveVideos = () => {
-  const proModal = useProModal();
   const [videos, setVideos] = useState([]);
   const [interactiveVideoId, setInteractiveVideoId] = useState(null);
   const [playingVideo, setPlayingVideo] = useState(null);
@@ -17,7 +15,9 @@ const InteractiveVideos = () => {
   const [isInteractiveVideoCreated, setIsInteractiveVideoCreated] = useState(false);
   const [isButtonTypeSelectionVisible, setIsButtonTypeSelectionVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [savedMessage, setSavedMessage] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [videoPath, setVideoPath] = useState([]); // To track the video path
+
   const iframeRef = useRef(null);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const InteractiveVideos = () => {
 
   const handlePlayVideo = (videoId) => {
     if (iframeRef.current) {
-      iframeRef.current.src = `https://iframe.mediadelivery.net/embed/275360/${videoId}?autoplay=true`;
+      iframeRef.current.src = `https://iframe.mediadelivery.net/embed/275360/${videoId}?autoplay=false`;
       setPlayingVideo(videoId);
     }
   };
@@ -71,45 +71,72 @@ const InteractiveVideos = () => {
       setPlayingVideo(selectedVideo);
       setIsInteractiveVideoCreated(true);
       console.log('Interaktives Video erstellt:', data);
+
+      // Start the video path with the first video
+      setVideoPath([{ videoId: selectedVideo, buttons: [] }]);
     } catch (error) {
       console.error('Error creating interactive video:', error);
     }
   };
 
-  const addNewButton = (type) => {
-    setButtons([...buttons, {
-      id: '',
-      label: 'Neuer Button',
-      link: type === 'video' ? '' : null,
-      url: type === 'link' ? '' : null,
-      type,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      textColor: '#ffffff',
-      icon: '',
-      width: 45,
-      height: 8,
-      top: 84,
-      left: 2,
-      isVisible: true,
-    }]);
+  const addNewButton = (videoId, type) => {
+    setVideoPath((prevPath) => {
+      const updatedPath = prevPath.map((video) => {
+        if (video.videoId === videoId) {
+          return {
+            ...video,
+            buttons: [
+              ...video.buttons,
+              {
+                id: '',
+                label: 'Neuer Button',
+                link: type === 'video' ? '' : null,
+                url: type === 'link' ? '' : null,
+                type,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                textColor: '#ffffff',
+                icon: '',
+                width: 45,
+                height: 8,
+                top: 84,
+                left: 2,
+                isVisible: true,
+              },
+            ],
+          };
+        }
+        return video;
+      });
+      return updatedPath;
+    });
     setIsButtonTypeSelectionVisible(false);
   };
 
-  const updateButton = (index, newProperties) => {
-    const newButtons = [...buttons];
-    newButtons[index] = { ...newButtons[index], ...newProperties };
-    setButtons(newButtons);
+  const updateButton = (videoId, index, newProperties) => {
+    setVideoPath((prevPath) => {
+      const updatedPath = prevPath.map((video) => {
+        if (video.videoId === videoId) {
+          const updatedButtons = [...video.buttons];
+          updatedButtons[index] = { ...updatedButtons[index], ...newProperties };
+          return { ...video, buttons: updatedButtons };
+        }
+        return video;
+      });
+      return updatedPath;
+    });
   };
 
-  const handleInputChange = (index, property, value) => {
+  const handleInputChange = (videoId, index, property, value) => {
     const numericalProperties = ['width', 'height', 'top', 'left'];
     const updatedValue = numericalProperties.includes(property) ? parseFloat(value) : value;
-    updateButton(index, { [property]: updatedValue });
+    updateButton(videoId, index, { [property]: updatedValue });
     console.log(`Updated ${property} for button ${index}:`, value);
   };
 
-  const handleButtonClick = (index) => {
-    const button = buttons[index];
+  const handleButtonClick = (videoId, index) => {
+    const video = videoPath.find((v) => v.videoId === videoId);
+    const button = video.buttons[index];
+
     if (!button.label || (button.type === 'video' && !button.link) || (button.type === 'link' && !button.url)) {
       setErrorMessage("Du musst alle Felder ausfüllen.");
       return;
@@ -119,13 +146,25 @@ const InteractiveVideos = () => {
       window.open(button.url, '_blank');
     } else if (button.type === 'video' && button.link) {
       handlePlayVideo(button.link);
+
+      // Add new video path
+      setVideoPath((prevPath) => [
+        ...prevPath,
+        {
+          videoId: button.link,
+          buttons: [], // Start with no buttons for new video
+        },
+      ]);
     }
-    updateButton(index, { isVisible: false });
+
+    updateButton(videoId, index, { isVisible: false });
     setErrorMessage('');
   };
 
-  const saveButton = async (index) => {
-    const button = buttons[index];
+  const saveButton = async (videoId, index) => {
+    const video = videoPath.find((v) => v.videoId === videoId);
+    const button = video.buttons[index];
+    
     if (!button.label || button.width <= 0 || button.height <= 0 || button.top < 0 || button.left < 0) {
       alert("Bitte alle Felder für den Button ausfüllen.");
       return;
@@ -133,7 +172,7 @@ const InteractiveVideos = () => {
 
     const buttonToSave = {
       ...button,
-      videoId: interactiveVideoId
+      videoId: interactiveVideoId,
     };
 
     console.log('Button to save:', buttonToSave);
@@ -153,26 +192,27 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Button gespeichert:', data);
-      updateButton(index, { id: data.id });
-      setSavedMessage(true);
+      updateButton(videoId, index, { id: data.id });
+      setFeedbackMessage('Button gespeichert');
 
       setTimeout(() => {
-        setSavedMessage(false);
+        setFeedbackMessage('');
       }, 3000);
     } catch (error) {
       console.error('Error saving button:', error);
     }
   };
 
-  const saveButtons = async () => {
+  const saveButtons = async (videoId) => {
     if (!interactiveVideoId) {
       alert("Bitte erstellen Sie zuerst ein interaktives Video.");
       return;
     }
 
-    const buttonsToSave = buttons.map(button => ({
+    const video = videoPath.find((v) => v.videoId === videoId);
+    const buttonsToSave = video.buttons.map((button) => ({
       ...button,
-      videoId: interactiveVideoId
+      videoId: interactiveVideoId,
     }));
 
     console.log('Buttons to save:', buttonsToSave);
@@ -192,11 +232,18 @@ const InteractiveVideos = () => {
 
       const data = await response.json();
       console.log('Buttons gespeichert:', data);
-      setButtons(data.buttons || data);
-      setSavedMessage(true);
+      setVideoPath((prevPath) =>
+        prevPath.map((v) => {
+          if (v.videoId === videoId) {
+            return { ...v, buttons: data.buttons || data };
+          }
+          return v;
+        })
+      );
+      setFeedbackMessage('Alle Buttons gespeichert');
 
       setTimeout(() => {
-        setSavedMessage(false);
+        setFeedbackMessage('');
       }, 3000);
     } catch (error) {
       console.error('Error saving buttons:', error);
@@ -212,7 +259,11 @@ const InteractiveVideos = () => {
     const handleFullscreenChange = () => {
       const iframe = iframeRef.current;
       if (iframe) {
-        const isFullscreen = document.fullscreenElement === iframe || document.webkitFullscreenElement === iframe || document.mozFullScreenElement === iframe || document.msFullscreenElement === iframe;
+        const isFullscreen =
+          document.fullscreenElement === iframe ||
+          document.webkitFullscreenElement === iframe ||
+          document.mozFullScreenElement === iframe ||
+          document.msFullscreenElement === iframe;
         iframe.style.position = isFullscreen ? 'fixed' : 'absolute';
         iframe.style.top = isFullscreen ? '0' : '0';
         iframe.style.width = isFullscreen ? '100%' : '100%';
@@ -259,211 +310,247 @@ const InteractiveVideos = () => {
             className="mb-4 w-full p-2 border rounded-md"
           >
             <option value="">Wähle ein Startvideo</option>
-            {videos.map(video => (
+            {videos.map((video) => (
               <option key={video.guid} value={video.guid}>
                 {video.title}
               </option>
             ))}
           </select>
-          <button onClick={createInteractiveVideo} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
+          <button
+            onClick={createInteractiveVideo}
+            className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full"
+          >
             Interaktives Video erstellen
           </button>
         </>
       )}
 
-      {playingVideo && (
-        <div className="relative mb-4">
-          <div style={{ position: 'relative', paddingTop: '56.25%' }}>
-            <iframe
-              ref={iframeRef}
-              src={`https://iframe.mediadelivery.net/embed/275360/${playingVideo}?autoplay=true`}
-              loading="lazy"
-              style={{ border: 'none', position: 'absolute', top: 0, height: '100%', width: '100%' }}
-              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-            {buttons.map((button, index) => (
-              button.isVisible && (
-                <div 
-                  key={index} 
-                  className="absolute flex items-center justify-center rounded-md cursor-pointer"
-                  style={{
-                    backgroundColor: button.backgroundColor,
-                    color: button.textColor,
-                    width: `${button.width}%`,
-                    height: `${button.height}%`,
-                    top: `${button.top}%`,
-                    left: `${button.left}%`,
-                  }}
-                  onClick={() => handleButtonClick(index)}
-                >
-                  {button.icon && renderIcon(button.icon)}
-                  <span>{button.label}</span>
-                </div>
-              )
-            ))}
+      {/* Render video path with buttons */}
+      {videoPath.map((video, videoIndex) => (
+        <div key={video.videoId} className="mt-8">
+          <h3 className="text-center text-white bg-gray-500 py-2 rounded-md mb-4">
+            Video {videoIndex + 1}
+          </h3>
+          <div className="relative mb-4">
+            <div style={{ position: 'relative', paddingTop: '56.25%' }}>
+              <iframe
+                src={`https://iframe.mediadelivery.net/embed/275360/${video.videoId}?autoplay=false`}
+                loading="lazy"
+                style={{ border: 'none', position: 'absolute', top: 0, height: '100%', width: '100%' }}
+                allow="accelerometer; gyroscope; encrypted-media; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+              {video.buttons.map((button, index) => (
+                button.isVisible && (
+                  <div
+                    key={index}
+                    className="absolute flex items-center justify-center rounded-md cursor-pointer"
+                    style={{
+                      backgroundColor: button.backgroundColor,
+                      color: button.textColor,
+                      width: `${button.width}%`,
+                      height: `${button.height}%`,
+                      top: `${button.top}%`,
+                      left: `${button.left}%`,
+                    }}
+                    onClick={() => handleButtonClick(video.videoId, index)}
+                  >
+                    {button.icon && renderIcon(button.icon)}
+                    <span>{button.label}</span>
+                  </div>
+                )
+              ))}
+            </div>
           </div>
+
+          {interactiveVideoId && !isButtonTypeSelectionVisible && (
+            <button
+              onClick={() => setIsButtonTypeSelectionVisible(true)}
+              className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full"
+            >
+              + Neuen Button erstellen
+            </button>
+          )}
+
+          {isButtonTypeSelectionVisible && (
+            <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                onClick={() => addNewButton(video.videoId, 'video')}
+                className="bg-blue-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full"
+              >
+                Neues Video auswählen
+              </button>
+              <button
+                onClick={() => addNewButton(video.videoId, 'link')}
+                className="bg-orange-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full"
+              >
+                Link auswählen
+              </button>
+            </div>
+          )}
+
+          {video.buttons.map((button, index) => (
+            <div key={index}>
+              <h2 className="text-center text-white bg-gray-500 py-2 rounded-md mb-4">
+                Button {index + 1} - {button.type === 'video' ? 'Video wechseln' : 'Link'}
+              </h2>
+              <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="font-bold block">
+                    Beschriftung:
+                    <input
+                      type="text"
+                      value={button.label}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'label', e.target.value)}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                {button.type === 'video' && (
+                  <div>
+                    <label className="font-bold block">
+                      Video:
+                      <select
+                        value={button.link}
+                        onChange={(e) => handleInputChange(video.videoId, index, 'link', e.target.value)}
+                        className="mt-1 px-2 py-1 border rounded-md w-full"
+                      >
+                        <option value="">Wähle ein Video</option>
+                        {videos.map((v) => (
+                          <option key={v.guid} value={v.guid}>
+                            {v.title}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                )}
+                {button.type === 'link' && (
+                  <div>
+                    <label className="font-bold block">
+                      URL:
+                      <input
+                        type="text"
+                        value={button.url || ''}
+                        onChange={(e) => handleInputChange(video.videoId, index, 'url', e.target.value)}
+                        className="mt-1 px-2 py-1 border rounded-md w-full"
+                      />
+                    </label>
+                  </div>
+                )}
+                <div>
+                  <label className="font-bold block">
+                    Hintergrundfarbe (Hex):
+                    <input
+                      type="text"
+                      value={button.backgroundColor}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'backgroundColor', e.target.value)}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label className="font-bold block">
+                    Textfarbe (Hex):
+                    <input
+                      type="text"
+                      value={button.textColor}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'textColor', e.target.value)}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label className="font-bold block">
+                    Icon:
+                    <input
+                      type="text"
+                      value={button.icon}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'icon', e.target.value)}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label className="font-bold block">
+                    Breite (%):
+                    <input
+                      type="number"
+                      value={button.width}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'width', parseFloat(e.target.value))}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label className="font-bold block">
+                    Höhe (%):
+                    <input
+                      type="number"
+                      value={button.height}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'height', parseFloat(e.target.value))}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label className="font-bold block">
+                    Oben (%):
+                    <input
+                      type="number"
+                      value={button.top}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'top', parseFloat(e.target.value))}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label className="font-bold block">
+                    Links (%):
+                    <input
+                      type="number"
+                      value={button.left}
+                      onChange={(e) => handleInputChange(video.videoId, index, 'left', parseFloat(e.target.value))}
+                      className="mt-1 px-2 py-1 border rounded-md w-full"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <button
+                    onClick={() => saveButton(video.videoId, index)}
+                    className="bg-green-500 text-white px-2 py-1 rounded-md mt-2 w-full"
+                  >
+                    Diesen Button speichern
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {video.buttons.length > 0 && (
+            <button
+              onClick={() => saveButtons(video.videoId)}
+              className="bg-green-800 text-white px-4 py-4 rounded-md mt-4 w-full"
+            >
+              Alle Buttons speichern
+            </button>
+          )}
         </div>
-      )}
+      ))}
 
       {videos.length === 0 && (
         <p className="text-center text-gray-500 mt-4">Keine Videos verfügbar.</p>
       )}
 
-      {interactiveVideoId && !isButtonTypeSelectionVisible && (
-        <button onClick={() => setIsButtonTypeSelectionVisible(true)} className="bg-black text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
-          + Neuen Button erstellen
-        </button>
-      )}
-
-      {isButtonTypeSelectionVisible && (
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button onClick={() => addNewButton('video')} className="bg-blue-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
-            Neues Video auswählen
-          </button>
-          <button onClick={() => addNewButton('link')} className="bg-orange-800 text-white px-4 py-4 rounded-md mb-4 mt-4 w-full">
-            Link auswählen
-          </button>
-        </div>
-      )}
-
-      {buttons.map((button, index) => (
-        <div key={index}>
-          <h2 className="text-center text-white bg-gray-500 py-2 rounded-md mb-4">
-            Button {index + 1} - {button.type === 'video' ? 'Video wechseln' : 'Link'}
-          </h2>
-          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="font-bold block">Beschriftung:
-                <input 
-                  type="text" 
-                  value={button.label} 
-                  onChange={(e) => handleInputChange(index, 'label', e.target.value)} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            {button.type === 'video' && (
-              <div>
-                <label className="font-bold block">Video:
-                  <select 
-                    value={button.link} 
-                    onChange={(e) => handleInputChange(index, 'link', e.target.value)} 
-                    className="mt-1 px-2 py-1 border rounded-md w-full"
-                  >
-                    <option value="">Wähle ein Video</option>
-                    {videos.map(video => (
-                      <option key={video.guid} value={video.guid}>
-                        {video.title}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            )}
-            {button.type === 'link' && (
-              <div>
-                <label className="font-bold block">URL:
-                  <input 
-                    type="text" 
-                    value={button.url || ''} 
-                    onChange={(e) => handleInputChange(index, 'url', e.target.value)} 
-                    className="mt-1 px-2 py-1 border rounded-md w-full"
-                  />
-                </label>
-              </div>
-            )}
-            <div>
-              <label className="font-bold block">Hintergrundfarbe (Hex):
-                <input 
-                  type="text" 
-                  value={button.backgroundColor} 
-                  onChange={(e) => handleInputChange(index, 'backgroundColor', e.target.value)} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="font-bold block">Textfarbe (Hex):
-                <input 
-                  type="text" 
-                  value={button.textColor} 
-                  onChange={(e) => handleInputChange(index, 'textColor', e.target.value)} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="font-bold block">Icon:
-                <input 
-                  type="text" 
-                  value={button.icon} 
-                  onChange={(e) => handleInputChange(index, 'icon', e.target.value)} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="font-bold block">Breite (%):
-                <input 
-                  type="number" 
-                  value={button.width} 
-                  onChange={(e) => handleInputChange(index, 'width', parseFloat(e.target.value))} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="font-bold block">Höhe (%):
-                <input 
-                  type="number" 
-                  value={button.height} 
-                  onChange={(e) => handleInputChange(index, 'height', parseFloat(e.target.value))} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="font-bold block">Oben (%):
-                <input 
-                  type="number" 
-                  value={button.top} 
-                  onChange={(e) => handleInputChange(index, 'top', parseFloat(e.target.value))} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="font-bold block">Links (%):
-                <input 
-                  type="number" 
-                  value={button.left} 
-                  onChange={(e) => handleInputChange(index, 'left', parseFloat(e.target.value))} 
-                  className="mt-1 px-2 py-1 border rounded-md w-full"
-                />
-              </label>
-            </div>
-            <div>
-              <button
-                onClick={() => saveButton(index)}
-                className="bg-green-500 text-white px-2 py-1 rounded-md mt-2 w-full"
-              >
-                Diesen Button speichern
-              </button>
-            </div>
-          </div>
-        </div>
-      ))}
-
-      {buttons.length > 0 && (
-        <button onClick={saveButtons} className="bg-green-800 text-white px-4 py-4 rounded-md mt-4 w-full">
-          Alle Buttons speichern
-        </button>
-      )}
-
       {errorMessage && (
         <div className="text-red-500 font-bold text-center mt-4">
           {errorMessage}
+        </div>
+      )}
+
+      {feedbackMessage && (
+        <div className="text-green-500 font-bold text-center mt-4">
+          {feedbackMessage}
         </div>
       )}
     </div>

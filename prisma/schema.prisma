@@ -41,8 +41,10 @@ model InteractiveVideo {
   buttons        Button[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  parentId       String?   // Optional field for parent video
+  parentVideo    InteractiveVideo? @relation("ParentChild", fields: [parentId], references: [id])
+  childVideos    InteractiveVideo[] @relation("ParentChild")
 }
-
 
 model Button {
   id              String   @id @default(cuid())

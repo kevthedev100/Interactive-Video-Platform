@@ -14,7 +14,7 @@ export const FreeCounter = ({
 
   useEffect(() => {
     // Definiert das Startdatum
-    const startDate = new Date(2024, 6, 29); // 5. März 2024, Monate sind 0-basiert
+    const startDate = new Date(2025, 1, 24); // 5. März 2024, Monate sind 0-basiert
     const endDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000); // Startdatum + 7 Tage
 
     const updateCountdown = () => {

@@ -1,17 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Heading } from "@/components/heading";
 import { useParams } from "next/navigation";
 import * as lucideIcons from "lucide-react";
 
-// Define the Button and Video interfaces
 interface Button {
   id: string;
   label: string;
-  link: string | null; // The video ID the button points to
-  url: string | null; // External URL if the button is a link
+  link: string | null; 
+  url: string | null;
   width: number;
   height: number;
   top: number;
@@ -20,7 +19,7 @@ interface Button {
   textColor: string;
   icon: string;
   type: "video" | "link";
-  videoId: string; // The video ID that the button belongs to
+  videoId: string; 
   isVisible: boolean;
 }
 
@@ -30,7 +29,7 @@ interface VideoPath {
 }
 
 const EditVideos = () => {
-  const { id } = useParams(); // Get the video ID from the URL
+  const { id } = useParams();
   const [videos, setVideos] = useState([]);
   const [interactiveVideoId, setInteractiveVideoId] = useState<string | null>(id);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
@@ -38,11 +37,9 @@ const EditVideos = () => {
   const [isButtonTypeSelectionVisible, setIsButtonTypeSelectionVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [feedbackMessage, setFeedbackMessage] = useState('');
-  const [selectedVideo, setSelectedVideo] = useState<string>(''); // Track selected video for button actions
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
-    // Fetch video data and buttons for the specific interactive video
     const fetchInteractiveVideo = async () => {
       try {
         const response = await fetch(`/api/interactive-videos/${id}`);
@@ -50,11 +47,17 @@ const EditVideos = () => {
           throw new Error("Failed to fetch interactive video");
         }
         const data = await response.json();
+
+        if (!data.videoId) {
+          throw new Error("Video ID not found in fetched data");
+        }
+
         setInteractiveVideoId(data.id);
         setPlayingVideo(data.videoId);
         setVideoPath([{ videoId: data.videoId, buttons: data.buttons || [] }]);
       } catch (error) {
         console.error("Error fetching interactive video:", error);
+        setErrorMessage("Failed to load video. Please check if the video exists.");
       }
     };
 
@@ -104,7 +107,7 @@ const EditVideos = () => {
                 top: 84,
                 left: 2,
                 isVisible: true,
-                videoId: video.videoId
+                videoId: video.videoId,
               },
             ],
           };
@@ -152,14 +155,13 @@ const EditVideos = () => {
     } else if (button.type === 'video' && button.link) {
       handlePlayVideo(button.link);
 
-      // Add new video path
       setVideoPath((prevPath) => {
         if (!prevPath.some((v) => v.videoId === button.link)) {
           return [
             ...prevPath,
             {
               videoId: button.link,
-              buttons: [], // Start with no buttons for new video
+              buttons: [],
             },
           ];
         }
@@ -351,7 +353,12 @@ const EditVideos = () => {
         bgColor="bg-gray-700/10"
       />
 
-      {/* Render video path with buttons */}
+      {errorMessage && (
+        <div className="text-red-500 font-bold text-center mt-4">
+          {errorMessage}
+        </div>
+      )}
+
       {videoPath.map((video, videoIndex) => (
         <div key={video.videoId} className="mt-8">
           <h3 className="text-center text-white bg-gray-500 py-2 rounded-md mb-4">
@@ -440,7 +447,7 @@ const EditVideos = () => {
                     <label className="font-bold block">
                       Video:
                       <select
-                        value={button.link}
+                        value={button.link || ""}
                         onChange={(e) => handleInputChange(video.videoId, index, 'link', e.target.value)}
                         className="mt-1 px-2 py-1 border rounded-md w-full"
                       >
@@ -565,19 +572,13 @@ const EditVideos = () => {
           {video.buttons.length > 0 && (
             <button
               onClick={() => saveButtons(video.videoId)}
-              className="bg-green-800 text-white px-4 py-4 rounded-md mt-4 w-full"
+              className="bg-green-800 text-white px-4 py-4 rounded-md mt-4 w/full"
             >
               Alle Buttons speichern
             </button>
           )}
         </div>
       ))}
-
-      {errorMessage && (
-        <div className="text-red-500 font-bold text-center mt-4">
-          {errorMessage}
-        </div>
-      )}
 
       {feedbackMessage && (
         <div className="text-green-500 font-bold text-center mt-4">

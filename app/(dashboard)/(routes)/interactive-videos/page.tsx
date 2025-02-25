@@ -130,7 +130,6 @@ const InteractiveVideos = () => {
     const numericalProperties = ['width', 'height', 'top', 'left'];
     const updatedValue = numericalProperties.includes(property) ? parseFloat(value) : value;
     updateButton(videoId, index, { [property]: updatedValue });
-    console.log(`Updated ${property} for button ${index}:`, value);
   };
 
   const handleButtonClick = (videoId, index) => {
@@ -175,10 +174,8 @@ const InteractiveVideos = () => {
       videoId: interactiveVideoId,
     };
 
-    console.log('Button to save:', buttonToSave);
-
     try {
-      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
+      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}/buttons`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,7 +188,6 @@ const InteractiveVideos = () => {
       }
 
       const data = await response.json();
-      console.log('Button gespeichert:', data);
       updateButton(videoId, index, { id: data.id });
       setFeedbackMessage('Button gespeichert');
 
@@ -215,10 +211,8 @@ const InteractiveVideos = () => {
       videoId: interactiveVideoId,
     }));
 
-    console.log('Buttons to save:', buttonsToSave);
-
     try {
-      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}`, {
+      const response = await fetch(`/api/interactive-videos/${interactiveVideoId}/buttons`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -231,7 +225,6 @@ const InteractiveVideos = () => {
       }
 
       const data = await response.json();
-      console.log('Buttons gespeichert:', data);
       setVideoPath((prevPath) =>
         prevPath.map((v) => {
           if (v.videoId === videoId) {
@@ -334,6 +327,7 @@ const InteractiveVideos = () => {
           <div className="relative mb-4">
             <div style={{ position: 'relative', paddingTop: '56.25%' }}>
               <iframe
+                ref={iframeRef}
                 src={`https://iframe.mediadelivery.net/embed/275360/${video.videoId}?autoplay=false`}
                 loading="lazy"
                 style={{ border: 'none', position: 'absolute', top: 0, height: '100%', width: '100%' }}

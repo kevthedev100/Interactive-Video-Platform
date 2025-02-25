@@ -50,17 +50,26 @@ const ViewInteractiveVideo = () => {
   useEffect(() => {
     const fetchInteractiveVideo = async () => {
       try {
-        const response = await fetch(`/api/interactive-videos/${id}`);
+        setLoading(true); // Start loading
+
+        const response = await fetch(`/api/interactive-videos/${id}/view`);
         if (!response.ok) {
           throw new Error("Failed to fetch interactive video");
         }
+        
         const data: VideoData = await response.json();
-        setVideoId(data.videoId); // Set the initial video ID
-        setButtons(data.buttons || []); // Set the buttons for the video
-        setLoading(false);
+
+        if (data && data.videoId) {
+          setVideoId(data.videoId); // Set the initial video ID
+          setButtons(data.buttons || []); // Set the buttons for the video
+        } else {
+          console.error("Invalid video data received");
+        }
+
       } catch (error) {
         console.error("Error fetching interactive video:", error);
-        setLoading(false); // Stop loading on error
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
@@ -148,7 +157,6 @@ const ViewInteractiveVideo = () => {
                 left: `${button.left}%`,
                 backgroundColor: button.backgroundColor,
                 color: button.textColor,
-                cursor: "pointer",
               }}
               onClick={() => handleButtonClick(index)}
             >

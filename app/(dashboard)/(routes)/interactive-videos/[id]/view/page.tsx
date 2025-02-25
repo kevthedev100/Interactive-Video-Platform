@@ -4,12 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import * as lucideIcons from "lucide-react";
 
-// Interface definitions
 interface Button {
   id: string;
   label: string;
-  link: string | null; // Video ID the button points to
-  url: string | null; // External URL if the button is a link
+  link: string | null;
+  url: string | null;
   width: number;
   height: number;
   top: number;
@@ -17,7 +16,7 @@ interface Button {
   backgroundColor: string;
   textColor: string;
   icon: string;
-  videoId: string; // ID of the video this button belongs to
+  videoId: string;
   isVisible: boolean;
 }
 
@@ -27,29 +26,27 @@ interface VideoData {
 }
 
 const ViewInteractiveVideo = () => {
-  const { id } = useParams(); // Get the interactive video ID from the URL
-  const [videoId, setVideoId] = useState<string>(""); // Current video ID being played
-  const [buttons, setButtons] = useState<Button[]>([]); // Buttons related to the current video
-  const [loading, setLoading] = useState(true); // Loading state
+  const { id } = useParams();
+  const [videoId, setVideoId] = useState<string>("");
+  const [buttons, setButtons] = useState<Button[]>([]);
+  const [loading, setLoading] = useState(true);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchInteractiveVideo = async () => {
       try {
-        const response = await fetch(`/api/interactive-videos/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
+        const response = await fetch(`/api/interactive-videos/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch interactive video");
         }
-
         const data: VideoData = await response.json();
-        setVideoId(data.videoId); // Set the initial video ID
-        setButtons(data.buttons || []); // Set buttons for the video
+
+        if (!data.videoId) {
+          throw new Error("Video ID not found in fetched data");
+        }
+
+        setVideoId(data.videoId);
+        setButtons(data.buttons || []);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching interactive video:", error);
@@ -98,19 +95,16 @@ const ViewInteractiveVideo = () => {
       window.open(button.url, "_blank");
     } else if (button.link) {
       setVideoId(button.link);
-      // Automatically filter buttons for the new video clip
-      setButtons((prevButtons) =>
-        prevButtons.map((btn) => ({
-          ...btn,
-          isVisible: btn.videoId === button.link, // Only show buttons for the current videoId
-        }))
-      );
+      setButtons(buttons.map(btn => ({
+        ...btn,
+        isVisible: btn.videoId === button.link,
+      })));
     }
   };
 
   if (loading) {
     return (
-      <div className="text-white flex flex-col items-center justify-center h-screen bg-black">
+      <div className="flex flex-col items-center justify-center h-screen bg-black">
         <img src="/Videyou-Logo.png" alt="Videyou Logo" className="w-1/2 max-w-xs" />
         <p className="text-white mt-6">Interaktive Videos von Videyou</p>
       </div>
@@ -121,15 +115,15 @@ const ViewInteractiveVideo = () => {
     <div className="relative w-full h-full overflow-hidden" ref={videoContainerRef}>
       <iframe
         id="video-iframe"
-        src={`https://iframe.mediadelivery.net/embed/275360/${videoId}?autoplay=true`} // Enable autoplay for transitions
+        src={`https://iframe.mediadelivery.net/embed/275360/${videoId}?autoplay=true`}
         loading="lazy"
         style={{ border: "none", height: "100%", width: "100%" }}
         allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
         allowFullScreen
       ></iframe>
-      <div id="buttons-container" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+      <div id="buttons-container" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
         {buttons
-          .filter((button) => button.videoId === videoId && button.isVisible) // Only show buttons for the current video
+          .filter(button => button.isVisible && button.videoId === videoId)
           .map((button, index) => (
             <div
               key={button.id}
@@ -141,7 +135,6 @@ const ViewInteractiveVideo = () => {
                 left: `${button.left}%`,
                 backgroundColor: button.backgroundColor,
                 color: button.textColor,
-                cursor: "pointer",
               }}
               onClick={() => handleButtonClick(index)}
             >

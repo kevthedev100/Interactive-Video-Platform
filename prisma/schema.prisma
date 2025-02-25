@@ -49,8 +49,8 @@ model InteractiveVideo {
 model Button {
   id              String   @id @default(cuid())
   label           String
-  link            String?  // Geändert zu optional
-  url             String?  // Optional field for the URL
+  link            String?  // Optional, der Button kann auf ein anderes Video verlinken
+  url             String?  // Optional, der Button kann eine URL haben
   width           Float
   height          Float
   top             Float
@@ -58,7 +58,8 @@ model Button {
   backgroundColor String
   textColor       String
   icon            String?
-  videoId         String
+  isVisible       Boolean  @default(true) // Neues Feld zur Steuerung der Sichtbarkeit des Buttons
+  videoId         String   // Verweis auf das Video, zu dem der Button gehört
   video           InteractiveVideo @relation(fields: [videoId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
